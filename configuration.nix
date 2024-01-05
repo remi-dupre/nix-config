@@ -10,6 +10,8 @@
       home-manager.nixosModules.home-manager
     ];
 
+  nix.sshServe.enable = true;
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   security.polkit.enable = true;
 
