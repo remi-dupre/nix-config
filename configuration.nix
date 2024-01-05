@@ -53,11 +53,17 @@
     extraGroups = [ "networkmanager" "wheel" ];
   };
 
-  # Enable automatic login for the user.
-  programs.sway.enable = true;
-  programs.dconf.enable = true;
+  # programs.dconf.enable = true;
+
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+  };
 
   services = {
+    # Required by xdg portal
+    dbus.enable = true;
+
     # Required by nautilus for trash management
     gvfs.enable = true;
 
@@ -65,6 +71,13 @@
     # https://discourse.nixos.org/t/after-upgrading-to-23-05-gnome-applications-take-a-long-time-to-start/28900
     gnome.tracker.enable = true;
     gnome.tracker-miners.enable = true;
+
+    # Multimedia support
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+    };
 
     greetd = {
       enable = true;
@@ -76,6 +89,13 @@
         default_session = initial_session;
       };
     };
+  };
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    # gtk portal needed to make gtk apps happy
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
   # Include homemanager config

@@ -36,11 +36,14 @@ in
       gnome.adwaita-icon-theme
       # Desktop
       gnome.nautilus
+      pavucontrol
+      rofi-wayland
+      signal-desktop
     ];
 
     file =
       {
-        # ".config/nvim".source = ./static/config/nvim;
+        ".config/rofi".source = ./static/config/rofi;
       };
   };
 
@@ -73,7 +76,7 @@ in
       config = {
         inherit modifier;
         startup = [
-          # { "command" = "systemctl --user import-environment"; }
+          # { "command" = "configure-gtk"; }
         ];
         fonts = {
           names = [ ctx.font.default ];
@@ -95,6 +98,7 @@ in
         keybindings =
           lib.mkOptionDefault {
             # Close window
+            "Mod1+F2" = "exec rofi -theme ~/.config/rofi/drun.rasi -show";
             "Mod1+F4" = "kill";
             # Rebuild config and reload
             "${modifier}+Shift+r" = "swaymsg reload";
