@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   ctx = {
@@ -22,6 +22,7 @@ in
   home.username = ctx.user;
   home.homeDirectory = "/home/${ctx.user}";
   home.stateVersion = "23.11"; # Please read the comment before changing.
+  home.keyboard.layout = "fr";
 
   home.packages = with pkgs; [
     cowsay
@@ -44,18 +45,107 @@ in
     download = "${config.home.homeDirectory}/downloads";
   };
 
-  wayland.windowManager.sway = {
-    enable = true;
-    config = {
-      modifier = "Mod4";
-      terminal = "alacritty";
-      startup = [
-        { command = "firefox"; }
-      ];
+  wayland.windowManager.sway =
+    {
+      enable = true;
+      config = {
+        fonts = {
+          names = [ ctx.font.default ];
+          size = 10.0;
+        };
+        input = {
+          "*".xkb_layout = "fr";
+        };
+        output = {
+          "*" = {
+            scale = "1.2";
+            bg = "${./static/wallpaper.2.jpg} fill";
+          };
+        };
+        window = {
+          hideEdgeBorders = "smart";
+          border = 2;
+        };
+        modifier = "Mod4";
+        keybindings =
+          let
+            modifier = config.wayland.windowManager.sway.config.modifier;
+          in
+          lib.mkOptionDefault {
+            # Change focus
+            "${modifier}+Left" = "focus left";
+            "${modifier}+Down" = "focus down";
+            "${modifier}+Up" = "focus up";
+            "${modifier}+Right" = "focus right";
+            "${modifier}+Tab" = "focus next";
+            "${modifier}+Shift+Tab" = "focus prev";
+            # Move focused window
+            "${modifier}+Shift+Left" = "move left";
+            "${modifier}+Shift+Down" = "move down";
+            "${modifier}+Shift+Up" = "move up";
+            "${modifier}+Shift+Right" = "move right";
+            # Split in horizontal orientation
+            "${modifier}+h" = "split h";
+            # Split in vertical orientation
+            "${modifier}+v" = "split v";
+            # Enter fullscreen mode for the focused container
+            "${modifier}+f" = "fullscreen toggle";
+            # Change container layout (stacked, tabbed, toggle split)
+            "${modifier}+s" = "layout stacking";
+            "${modifier}+z" = "layout tabbed";
+            "${modifier}+e" = "layout toggle split";
+            # Toggle tiling / floating
+            "${modifier}+Shift+space" = "floating toggle";
+            # Change focus between tiling / floating windows
+            "${modifier}+space" = "focus mode_toggle";
+            # Focus the parent container
+            "${modifier}+q" = "focus parent";
+            # Focus the child container
+            "${modifier}+d" = "focus child";
+            # Switch to workspace
+            "${modifier}+ampersand" = "workspace number 1";
+            "${modifier}+eacute" = "workspace number 2";
+            "${modifier}+quotedbl" = "workspace number 3";
+            "${modifier}+apostrophe" = "workspace number 4";
+            "${modifier}+parenleft" = "workspace number 5";
+            "${modifier}+minus" = "workspace number 6";
+            "${modifier}+egrave" = "workspace number 7";
+            "${modifier}+underscore" = "workspace number 8";
+            "${modifier}+ccedilla" = "workspace number 9";
+            "${modifier}+agrave" = "workspace number 10";
+            "${modifier}+t" = "workspace ";
+            # Move focused container to workspace
+            "${modifier}+Shift+ampersand" = "move container to workspace number 1";
+            "${modifier}+Shift+eacute" = "move container to workspace number 2";
+            "${modifier}+Shift+quotedbl" = "move container to workspace number 3";
+            "${modifier}+Shift+apostrophe" = "move container to workspace number 4";
+            "${modifier}+Shift+parenleft" = "move container to workspace number 5";
+            "${modifier}+Shift+minus" = "move container to workspace number 6";
+            "${modifier}+Shift+egrave" = "move container to workspace number 7";
+            "${modifier}+Shift+underscore" = "move container to workspace number 8";
+            "${modifier}+Shift+ccedilla" = "move container to workspace number 9";
+            "${modifier}+Shift+agrave" = "move container to workspace number 10";
+            "${modifier}+Shift+t" = "move container to workspace ";
+            # Change monitor for a workspace
+            "Mod1+Left" = "move workspace to output left";
+            "Mod1+Right" = "move workspace to output right";
+          };
+        terminal = "alacritty";
+        startup = [
+          { command = "firefox"; }
+        ];
+      };
+      extraConfig = ''
+        # Gesture navigation between workspaces
+        bindgesture swipe:3:right workspace next
+        bindgesture swipe:3:up    workspace next
+        bindgesture swipe:3:left  workspace prev
+        bindgesture swipe:3:down  workspace prev
+      '';
     };
-  };
 
   programs = {
+    bat.enable = true;
     home-manager.enable = true;
 
     alacritty = {
