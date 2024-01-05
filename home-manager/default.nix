@@ -30,6 +30,7 @@ in
       # Build base
       clang
       # Terminal Apps
+      fzf
       neovim
       # Desktop requirements
       (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
@@ -92,8 +93,9 @@ in
           };
         };
         window = {
-          hideEdgeBorders = "smart";
-          border = 2;
+          hideEdgeBorders = "both";
+          border = 1;
+          titlebar = false;
         };
         keybindings =
           lib.mkOptionDefault {
@@ -194,33 +196,33 @@ in
               "Escape" = "mode default";
             };
           };
-        colors =
-          let
-            base = {
-              background = ctx.color.back;
-              border = ctx.color.fdim;
-              childBorder = ctx.color.font;
-              indicator = ctx.color.fdim;
-              text = ctx.color.font;
-            };
-          in
-          {
-            focusedInactive = base;
-            placeholder = base;
-            focused = {
-              inherit (base) border indicator childBorder;
-              background = ctx.color.prim;
-              text = ctx.color.fbri;
-            };
-            unfocused = {
-              inherit (base) background border indicator childBorder;
-              text = ctx.color.fbri;
-            };
-            urgent = {
-              inherit (base) background indicator childBorder text;
-              border = ctx.color.prim;
-            };
-          };
+        # colors =
+        #   let
+        #     base = {
+        #       background = ctx.color.fdim;
+        #       border = ctx.color.fdim;
+        #       childBorder = "#00000000";
+        #       indicator = ctx.color.fdim;
+        #       text = ctx.color.font;
+        #     };
+        #   in
+        #   {
+        #     focusedInactive = base;
+        #     placeholder = base;
+        #     focused = {
+        #       inherit (base) border indicator childBorder;
+        #       background = ctx.color.prim;
+        #       text = ctx.color.fbri;
+        #     };
+        #     unfocused = {
+        #       inherit (base) background border indicator childBorder;
+        #       text = ctx.color.fbri;
+        #     };
+        #     urgent = {
+        #       inherit (base) background border childBorder indicator;
+        #       text = ctx.color.prim;
+        #     };
+        #   };
         terminal = "alacritty";
       };
       extraConfig = ''
@@ -291,6 +293,13 @@ in
     firefox = {
       enable = true;
       package = pkg-firefox;
+    };
+
+    fish = {
+      enable = true;
+      plugins = [
+        { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
+      ];
     };
 
     git = {

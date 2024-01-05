@@ -21,6 +21,7 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.plymouth.enable = true;
 
   # Network
   networking.hostName = "nixos"; # Define your hostname.
@@ -52,8 +53,6 @@
     description = "Rémi Dupré";
     extraGroups = [ "networkmanager" "wheel" ];
   };
-
-  # programs.dconf.enable = true;
 
   programs.sway = {
     enable = true;
