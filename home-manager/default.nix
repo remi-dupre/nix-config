@@ -51,6 +51,12 @@ in
     download = "${config.home.homeDirectory}/downloads";
   };
 
+  gtk.gtk3.bookmarks = [
+    "/tmp"
+    "${config.home.homeDirectory}/documents"
+    "${config.home.homeDirectory}/downloads"
+  ];
+
   dconf = {
     enable = true;
     settings."org/gnome/desktop/interface" = {
@@ -323,9 +329,11 @@ in
     };
   };
 
-  services.gpg-agent = {
-    enable = true;
-    defaultCacheTtl = 1800;
-    enableSshSupport = true;
+  services = {
+    gpg-agent = {
+      enable = true;
+      defaultCacheTtl = 1800;
+      enableSshSupport = true;
+    };
   };
 }

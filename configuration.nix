@@ -6,9 +6,9 @@
 
 {
   imports = [
-      ./hardware-configuration.nix  # Include the results of the hardware scan.
-      home-manager.nixosModules.home-manager
-    ];
+    ./hardware-configuration.nix # Include the results of the hardware scan.
+    home-manager.nixosModules.home-manager
+  ];
 
   nix.sshServe.enable = true;
 
@@ -52,15 +52,21 @@
 
   # Enable automatic login for the user.
   programs.sway.enable = true;
+  programs.dconf.enable = true;
 
-  services.greetd = {
-    enable = true;
-    settings = rec {
-      initial_session = {
-        command = "${pkgs.sway}/bin/sway";
-        user = "remi";
+  services = {
+    gvfs.enable = true;
+    gnome.tracker-miners.enable = true;
+
+    greetd = {
+      enable = true;
+      settings = rec {
+        initial_session = {
+          command = "${pkgs.sway}/bin/sway";
+          user = "remi";
+        };
+        default_session = initial_session;
       };
-      default_session = initial_session;
     };
   };
 
@@ -71,7 +77,7 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  environment.systemPackages = with pkgs; [];
+  environment.systemPackages = with pkgs; [ ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
