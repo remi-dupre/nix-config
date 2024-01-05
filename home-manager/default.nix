@@ -25,9 +25,11 @@ in
   home.keyboard.layout = "fr";
 
   home.packages = with pkgs; [
-    cowsay
+    # Build base
     clang
+    # Terminal
     neovim
+    # Fonts
     (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
   ];
 
@@ -46,9 +48,13 @@ in
   };
 
   wayland.windowManager.sway =
+    let
+      modifier = "Mod4";
+    in
     {
       enable = true;
       config = {
+        inherit modifier;
         fonts = {
           names = [ ctx.font.default ];
           size = 10.0;
@@ -66,12 +72,16 @@ in
           hideEdgeBorders = "smart";
           border = 2;
         };
-        modifier = "Mod4";
         keybindings =
-          let
-            modifier = config.wayland.windowManager.sway.config.modifier;
-          in
           lib.mkOptionDefault {
+            # Rebuild config and reload
+            "${modifier}+Shift+r" = "swaymsg reload";
+            # Always on top window
+            "${modifier}+w" = "sticky toggle";
+            # Stick and resize
+            "${modifier}+Shift+w" = "floating enable; sticky enable; border none; resize set 624 351; move position {{ (monitor.width / sway.scale - 634) | int }} 0";
+            # Shutdown button
+            "XF86PowerOff" = "exec shutdown -h now";
             # Change focus
             "${modifier}+Left" = "focus left";
             "${modifier}+Down" = "focus down";
@@ -126,9 +136,64 @@ in
             "${modifier}+Shift+ccedilla" = "move container to workspace number 9";
             "${modifier}+Shift+agrave" = "move container to workspace number 10";
             "${modifier}+Shift+t" = "move container to workspace ";
+            # Switch to resize mode
+            "${modifier}+r" = "mode resize";
+            # Application shortcuts
+            "Control+Mod1+d" = "exec ${pkgs.gnome.nautilus}/bin/nautilus";
+            "Control+Mod1+f" = "exec firefox";
+            "Control+Shift+p" = "exec firefox --private-window";
+            "Control+Mod1+s" = "exec pavucontrol";
+            "Control+Mod1+b" = "exec blueman-manager";
+            "Mod1+c" = "exec rofimoji -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-descriptions --selector-args '-theme rofimoji'";
+
             # Change monitor for a workspace
             "Mod1+Left" = "move workspace to output left";
             "Mod1+Right" = "move workspace to output right";
+          };
+        modes =
+          {
+            resize = {
+              # These bindings trigger as soon as you enter the resize mode
+              "Left" = "resize shrink width 1 px or 1 ppt";
+              "Down" = "resize grow height 1 px or 1 ppt";
+              "Up" = "resize shrink height 1 px or 1 ppt";
+              "Right" = "resize grow width 1 px or 1 ppt";
+              # All the same but 10 times as effective with controll key pressed
+              "Control+Left" = "resize shrink width 10 px or 10 ppt";
+              "Control+Down" = "resize grow height 10 px or 10 ppt";
+              "Control+Up" = "resize shrink height 10 px or 10 ppt";
+              "Control+Right" = "resize grow width 10 px or 10 ppt";
+              # Back to normal: Enter or Escape
+              "Return" = "mode default";
+              "Escape" = "mode default";
+            };
+          };
+        colors =
+          let
+            base = {
+              background = ctx.color.back;
+              border = ctx.color.fdim;
+              childBorder = ctx.color.font;
+              indicator = ctx.color.fdim;
+              text = ctx.color.font;
+            };
+          in
+          {
+            focusedInactive = base;
+            placeholder = base;
+            focused = {
+              inherit (base) border indicator childBorder;
+              background = ctx.color.prim;
+              text = ctx.color.fbri;
+            };
+            unfocused = {
+              inherit (base) background border indicator childBorder;
+              text = ctx.color.fbri;
+            };
+            urgent = {
+              inherit (base) background indicator childBorder text;
+              border = ctx.color.prim;
+            };
           };
         terminal = "alacritty";
         startup = [
@@ -145,7 +210,7 @@ in
     };
 
   programs = {
-    bat.enable = true;
+    bat. enable = true;
     home-manager.enable = true;
 
     alacritty = {
