@@ -16,6 +16,7 @@ let
       monospace = "FiraMono Nerd Font";
     };
   };
+  pkg-firefox = pkgs.firefox-devedition;
 
 in
 {
@@ -27,10 +28,13 @@ in
   home.packages = with pkgs; [
     # Build base
     clang
-    # Terminal
+    # Terminal Apps
     neovim
-    # Fonts
+    # Desktop requirements
     (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+    gnome.adwaita-icon-theme
+    # Desktop
+    gnome.nautilus
   ];
 
   home.file = {
@@ -45,6 +49,14 @@ in
     desktop = "/tmp";
     documents = "${config.home.homeDirectory}/documents";
     download = "${config.home.homeDirectory}/downloads";
+  };
+
+  dconf = {
+    enable = true;
+    settings."org.gnome.desktop.interface" = {
+      color-scheme = "prefer-dark"; # gtk 4
+      font-name = "Noto Sans 10";
+    };
   };
 
   wayland.windowManager.sway =
@@ -74,6 +86,8 @@ in
         };
         keybindings =
           lib.mkOptionDefault {
+            # Close window
+            "Mod1+F4" = "kill";
             # Rebuild config and reload
             "${modifier}+Shift+r" = "swaymsg reload";
             # Always on top window
@@ -139,9 +153,9 @@ in
             # Switch to resize mode
             "${modifier}+r" = "mode resize";
             # Application shortcuts
-            "Control+Mod1+d" = "exec ${pkgs.gnome.nautilus}/bin/nautilus";
-            "Control+Mod1+f" = "exec firefox";
-            "Control+Shift+p" = "exec firefox --private-window";
+            "Control+Mod1+d" = "exec nautilus";
+            "Control+Mod1+f" = "exec ${pkg-firefox}/bin/firefox";
+            "Control+Shift+p" = "exec ${pkg-firefox}/bin/firefox --private-window";
             "Control+Mod1+s" = "exec pavucontrol";
             "Control+Mod1+b" = "exec blueman-manager";
             "Mod1+c" = "exec rofimoji -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-descriptions --selector-args '-theme rofimoji'";
@@ -196,9 +210,6 @@ in
             };
           };
         terminal = "alacritty";
-        startup = [
-          { command = "firefox"; }
-        ];
       };
       extraConfig = ''
         # Gesture navigation between workspaces
@@ -266,7 +277,7 @@ in
 
     firefox = {
       enable = true;
-      package = pkgs.firefox-devedition;
+      package = pkg-firefox;
     };
 
     git = {
