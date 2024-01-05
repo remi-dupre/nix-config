@@ -16,7 +16,13 @@
   nix.sshServe.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  security.polkit.enable = true;
+
+  security = {
+    polkit.enable = true;
+    pam.loginLimits = [
+      { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+    ];
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -51,7 +57,10 @@
     isNormalUser = true;
     description = "Rémi Dupré";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.fish;
   };
+
+  programs.fish.enable = true;
 
   programs.sway = {
     enable = true;

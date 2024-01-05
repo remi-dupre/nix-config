@@ -12,7 +12,7 @@ let
       fbri = "#FFFFFF"; # bright font color
     };
     font = {
-      default = "Noto Sans Nerd Font";
+      default = "NotoSans Nerd Font";
       monospace = "FiraMono Nerd Font";
     };
   };
@@ -34,6 +34,7 @@ in
       neovim
       # Desktop requirements
       (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+      font-awesome_4 # used by i3status-rs
       gnome.adwaita-icon-theme
       # Desktop
       gnome.nautilus
@@ -64,7 +65,7 @@ in
     enable = true;
     settings."org.gnome.desktop.interface" = {
       color-scheme = "prefer-dark"; # gtk 4
-      font-name = "Noto Sans 10";
+      font-name = "${ctx.font.default} 10";
     };
   };
 
@@ -97,6 +98,18 @@ in
           border = 1;
           titlebar = false;
         };
+        bars = [{
+          statusCommand = "SHELL=${pkgs.bash}/bin/bash i3status-rs ~/.config/i3status-rust/config-default.toml";
+          position = "top";
+          trayOutput = "none";
+
+          colors = {
+            statusline = ctx.color.back;
+            background = ctx.color.back;
+            focusedWorkspace = with ctx.color; { background = prim; border = back; text = fbri; };
+            inactiveWorkspace = with ctx.color; { background = back; border = back; text = font; };
+          };
+        }];
         keybindings =
           lib.mkOptionDefault {
             # Close window
@@ -168,8 +181,8 @@ in
             "${modifier}+r" = "mode resize";
             # Application shortcuts
             "Control+Mod1+d" = "exec nautilus";
-            "Control+Mod1+f" = "exec ${pkg-firefox}/bin/firefox";
-            "Control+Shift+p" = "exec ${pkg-firefox}/bin/firefox --private-window";
+            "Control+Mod1+f" = "exec firefox";
+            "Control+Shift+p" = "exec firefox --private-window";
             "Control+Mod1+s" = "exec pavucontrol";
             "Control+Mod1+b" = "exec blueman-manager";
             "Mod1+c" = "exec rofimoji -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-descriptions --selector-args '-theme rofimoji'";
@@ -236,7 +249,6 @@ in
 
   programs = {
     bat.enable = true;
-    bash.enable = true; # TODO: replace with fish
     home-manager.enable = true;
 
     alacritty = {
@@ -326,6 +338,121 @@ in
       enable = true;
     };
 
+    i3status-rust = {
+      enable = true;
+
+      bars = {
+        default = {
+          settings = {
+            theme = {
+              theme = "plain";
+              overrides.separator = " ";
+            };
+            icons = {
+              icons = "awesome4";
+              overrides = {
+                net_wireless = "";
+                backlight = [ "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ];
+              };
+            };
+          };
+          blocks =
+            let
+              spacer = char: {
+                block = "custom";
+                command = "echo '${char}'";
+                interval = 3600;
+              };
+              spacers =
+                size: char: lib.lists.forEach
+                  (lib.lists.range 1 size)
+                  (_: spacer char);
+            in
+            [
+              {
+                block = "focused_window";
+                format = "<b>$title.str(max_w:120)</b>|";
+              }
+            ]
+            ++
+            spacers 30 ""
+            ++
+            [
+              # TODO: bluetooth
+              {
+                block = "net";
+                format = "^icon_net_down$speed_down.eng(prefix:K) ^icon_net_up$speed_up.eng(prefix:K)";
+                interval = 5;
+              }
+              {
+                block = "custom";
+                command = "echo ⇄ $(ping -c1 8.8.8.8 | perl -nle '/time=(\\d+)/ && print $1')ms";
+                interval = 60;
+              }
+              (spacer "⁞")
+              {
+                block = "cpu";
+                interval = 1;
+              }
+              {
+                block = "memory";
+                format = "$icon $mem_used";
+              }
+              (spacer "⁞")
+              {
+                block = "sound";
+                device_kind = "source";
+                show_volume_when_muted = true;
+              }
+              {
+                block = "sound";
+                show_volume_when_muted = true;
+              }
+              (spacer "⁞")
+              {
+                block = "hueshift";
+                hue_shifter = "gammastep";
+                format = "☀ $temperature";
+                step = 50;
+                click_temp = 3500;
+              }
+              {
+                block = "backlight";
+              }
+              (spacer "⁞")
+              {
+                block = "battery";
+                interval = 1;
+                format = "$icon  $percentage";
+                full_format = "";
+                empty_format = "";
+                full_threshold = 100;
+                good = 100;
+                info = 75;
+                warning = 50;
+                critical = 25;
+              }
+              {
+                block = "battery";
+                interval = 10;
+                format = "($time)";
+                full_threshold = 100;
+                good = 100;
+                info = 75;
+                warning = 50;
+                critical = 25;
+              }
+              (spacer "⁞")
+              {
+                block = "time";
+                interval = 1;
+                format = "<b>$timestamp.datetime(f:'%A %d %B %Y - %H:%M', l:fr_FR)</b>";
+              }
+            ];
+        };
+      };
+    };
+
     starship = {
       enable = true;
       settings = {
@@ -355,7 +482,7 @@ in
         custom.nice = {
           command = ''echo "★ $(nice)"'';
           when = ''if [ $(nice) == "0" ]; then exit 1; else exit 0; fi'';
-          shell = "/bin/bash";
+          shell = "${pkgs.bash}/bin/bash";
         };
       };
     };
