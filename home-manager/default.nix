@@ -53,7 +53,7 @@ in
 
   dconf = {
     enable = true;
-    settings."org.gnome.desktop.interface" = {
+    settings."org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark"; # gtk 4
       font-name = "Noto Sans 10";
     };
