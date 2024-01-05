@@ -10,6 +10,9 @@
     home-manager.nixosModules.home-manager
   ];
 
+  zramSwap.enable = true;
+
+  # TODO: remove
   nix.sshServe.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -55,7 +58,12 @@
   programs.dconf.enable = true;
 
   services = {
+    # Required by nautilus for trash management
     gvfs.enable = true;
+
+    # Required by nautilus for indexing files, see
+    # https://discourse.nixos.org/t/after-upgrading-to-23-05-gnome-applications-take-a-long-time-to-start/28900
+    gnome.tracker.enable = true;
     gnome.tracker-miners.enable = true;
 
     greetd = {
@@ -77,7 +85,16 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  environment.systemPackages = with pkgs; [ ];
+
+  environment = {
+    systemPackages = with pkgs; [ neovim ];
+
+    variables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+      GTK_THEME = "Adwaita-dark";
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

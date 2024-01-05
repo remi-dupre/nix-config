@@ -20,29 +20,28 @@ let
 
 in
 {
-  home.username = ctx.user;
-  home.homeDirectory = "/home/${ctx.user}";
-  home.stateVersion = "23.11"; # Please read the comment before changing.
-  home.keyboard.layout = "fr";
+  home = {
+    username = ctx.user;
+    homeDirectory = "/home/${ctx.user}";
+    stateVersion = "23.11"; # Please read the comment before changing.
+    keyboard.layout = "fr";
 
-  home.packages = with pkgs; [
-    # Build base
-    clang
-    # Terminal Apps
-    neovim
-    # Desktop requirements
-    (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
-    gnome.adwaita-icon-theme
-    # Desktop
-    gnome.nautilus
-  ];
+    packages = with pkgs; [
+      # Build base
+      clang
+      # Terminal Apps
+      neovim
+      # Desktop requirements
+      (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+      gnome.adwaita-icon-theme
+      # Desktop
+      gnome.nautilus
+    ];
 
-  home.file = {
-    # ".config/nvim".source = ./static/config/nvim;
-  };
-
-  home.sessionVariables = {
-    EDITOR = "nvim";
+    file =
+      {
+        # ".config/nvim".source = ./static/config/nvim;
+      };
   };
 
   xdg.userDirs = {
@@ -59,7 +58,7 @@ in
 
   dconf = {
     enable = true;
-    settings."org/gnome/desktop/interface" = {
+    settings."org.gnome.desktop.interface" = {
       color-scheme = "prefer-dark"; # gtk 4
       font-name = "Noto Sans 10";
     };
@@ -73,6 +72,9 @@ in
       enable = true;
       config = {
         inherit modifier;
+        startup = [
+          # { "command" = "systemctl --user import-environment"; }
+        ];
         fonts = {
           names = [ ctx.font.default ];
           size = 10.0;
@@ -82,7 +84,7 @@ in
         };
         output = {
           "*" = {
-            scale = "1.2";
+            scale = "1";
             bg = "${./static/wallpaper.2.jpg} fill";
           };
         };
@@ -227,7 +229,8 @@ in
     };
 
   programs = {
-    bat. enable = true;
+    bat.enable = true;
+    bash.enable = true; # TODO: replace with fish
     home-manager.enable = true;
 
     alacritty = {
