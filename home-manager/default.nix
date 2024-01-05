@@ -326,6 +326,40 @@ in
       enable = true;
     };
 
+    starship = {
+      enable = true;
+      settings = {
+        fill.symbol = " ";
+        package.disabled = true;
+        directory.style = "bold underline cyan";
+        username.format = "[$user](dimmed yellow)@";
+
+        format = lib.concatStrings [
+          "$all$fill$kubernetes"
+          "$line_break"
+          "$jobs$battery$time$status$container$shell$character"
+        ];
+
+        hostname = {
+          format = "[$hostname]($style) ";
+          style = "dimmed";
+          ssh_only = false;
+        };
+
+        time = {
+          disabled = false;
+          format = "[$time]($style) ";
+          style = "dimmed";
+        };
+
+        custom.nice = {
+          command = ''echo "★ $(nice)"'';
+          when = ''if [ $(nice) == "0" ]; then exit 1; else exit 0; fi'';
+          shell = "/bin/bash";
+        };
+      };
+    };
+
     ssh = {
       enable = true;
       matchBlocks = {
@@ -353,3 +387,5 @@ in
     };
   };
 }
+
+
