@@ -24,12 +24,14 @@ in
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
+    cowsay
+    clang
     neovim
     (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
   ];
 
   home.file = {
-    ".config/nvim".source = ./static/config/nvim;
+    # ".config/nvim".source = ./static/config/nvim;
   };
 
   home.sessionVariables = {
@@ -42,8 +44,18 @@ in
     download = "${config.home.homeDirectory}/downloads";
   };
 
+  wayland.windowManager.sway = {
+    enable = true;
+    config = {
+      modifier = "Mod4";
+      terminal = "alacritty";
+      startup = [
+        { command = "firefox"; }
+      ];
+    };
+  };
+
   programs = {
-    firefox.enable = true;
     home-manager.enable = true;
 
     alacritty = {
@@ -97,6 +109,11 @@ in
       };
     };
 
+    firefox = {
+      enable = true;
+      package = pkgs.firefox-devedition;
+    };
+
     git = {
       enable = true;
       userName = ctx.user;
@@ -115,6 +132,10 @@ in
       extraConfig = {
         push.autoSetupRemote = true;
       };
+    };
+
+    htop = {
+      enable = true;
     };
 
     ssh = {
