@@ -10,12 +10,19 @@
     home-manager.nixosModules.home-manager
   ];
 
-  zramSwap.enable = true;
 
   # TODO: remove
   nix.sshServe.enable = true;
 
+  zramSwap.enable = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  hardware = {
+    bluetooth = {
+      enable = true; # enables support for Bluetooth
+      powerOnBoot = true; # powers up the default Bluetooth controller on boot
+    };
+  };
 
   security = {
     polkit.enable = true;
@@ -64,10 +71,12 @@
 
   programs.sway = {
     enable = true;
-    wrapperFeatures.gtk = true;
   };
 
   services = {
+    # Bluetooth pairing management
+    blueman.enable = true;
+
     # Required by xdg portal
     dbus.enable = true;
 
@@ -90,7 +99,8 @@
       enable = true;
       settings = rec {
         initial_session = {
-          command = "${pkgs.sway}/bin/sway";
+          # sway is started inside of a shell to load user's env variables
+          command = "fish -c sway";
           user = "remi";
         };
         default_session = initial_session;
@@ -119,7 +129,6 @@
     variables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
-      GTK_THEME = "Adwaita-dark";
     };
   };
 

@@ -16,15 +16,18 @@ let
       monospace = "FiraMono Nerd Font";
     };
   };
-  pkg-firefox = pkgs.firefox-devedition;
 
 in
-{
+rec {
   home = {
     username = ctx.user;
     homeDirectory = "/home/${ctx.user}";
     stateVersion = "23.11"; # Please read the comment before changing.
     keyboard.layout = "fr";
+
+    sessionVariables = {
+      GTK_THEME = "adw-gtk3-dark";
+    };
 
     packages = with pkgs; [
       # Build base
@@ -34,6 +37,7 @@ in
       neovim
       # Desktop requirements
       (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+      adw-gtk3 # libadwaita theme for GTK3
       font-awesome_4 # used by i3status-rs
       gnome.adwaita-icon-theme
       # Desktop
@@ -43,10 +47,9 @@ in
       signal-desktop
     ];
 
-    file =
-      {
-        ".config/rofi".source = ./static/config/rofi;
-      };
+    file = {
+      ".config/rofi".source = ./static/config/rofi;
+    };
   };
 
   xdg.userDirs = {
@@ -63,7 +66,7 @@ in
 
   dconf = {
     enable = true;
-    settings."org.gnome.desktop.interface" = {
+    settings."org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark"; # gtk 4
       font-name = "${ctx.font.default} 10";
     };
@@ -75,9 +78,20 @@ in
     in
     {
       enable = true;
+
+      wrapperFeatures = {
+        base = true;
+        gtk = true;
+      };
+
       config = {
         inherit modifier;
         startup = [
+          {
+            command = "systemctl --user import-environment";
+            always = true;
+          }
+          # { "command" = "dbus-sway-environment"; }
           # { "command" = "configure-gtk"; }
         ];
         fonts = {
@@ -304,7 +318,7 @@ in
 
     firefox = {
       enable = true;
-      package = pkg-firefox;
+      package = pkgs.firefox-devedition;
     };
 
     fish = {
@@ -507,6 +521,8 @@ in
   };
 
   services = {
+    mpris-proxy.enable = true;
+
     dunst = {
       enable = true;
       iconTheme =
