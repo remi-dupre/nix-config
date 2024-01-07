@@ -10,10 +10,6 @@
     home-manager.nixosModules.home-manager
   ];
 
-
-  # TODO: remove
-  nix.sshServe.enable = true;
-
   zramSwap.enable = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -36,8 +32,10 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Network
-  networking.hostName = "nixos"; # Define your hostname.
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "cerf"; # Define your hostname.
+    networkmanager.enable = true;
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Paris";

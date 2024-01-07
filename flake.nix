@@ -3,7 +3,7 @@
   inputs.home-manager.url = github:nix-community/home-manager;
 
   outputs = { self, nixpkgs, ... }@attrs: {
-    nixosConfigurations.chamois = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.cerf = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = attrs;
       modules = [ ./configuration.nix ];
