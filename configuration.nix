@@ -2,12 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, home-manager, ... }:
+{ config, pkgs, disko, home-manager, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix # Include the results of the hardware scan.
     home-manager.nixosModules.home-manager
+    disko.nixosModules.disko
+    ./disko-partitioning.nix
   ];
 
   zramSwap.enable = true;

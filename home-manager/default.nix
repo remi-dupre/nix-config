@@ -25,10 +25,6 @@ rec {
     stateVersion = "23.11"; # Please read the comment before changing.
     keyboard.layout = "fr";
 
-    sessionVariables = {
-      GTK_THEME = "adw-gtk3-dark";
-    };
-
     packages = with pkgs; [
       # Build base
       clang
@@ -39,13 +35,31 @@ rec {
       (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
       adw-gtk3 # libadwaita theme for GTK3
       font-awesome_4 # used by i3status-rs
-      gnome.adwaita-icon-theme
       # Desktop
       gnome.nautilus
       pavucontrol
       rofi-wayland
       signal-desktop
     ];
+
+    sessionVariables = {
+      GTK_THEME = "adw-gtk3-dark";
+    };
+
+    shellAliases = {
+      vim = "nvim";
+      l = "ll";
+    };
+
+    pointerCursor = {
+      name = "Adwaita";
+      package = pkgs.gnome.adwaita-icon-theme;
+      size = 16;
+      x11 = {
+        enable = true;
+        defaultCursor = "Adwaita";
+      };
+    };
 
     file = {
       ".config/rofi".source = ./static/config/rofi;
@@ -87,10 +101,6 @@ rec {
       config = {
         inherit modifier;
         startup = [
-          {
-            command = "systemctl --user import-environment";
-            always = true;
-          }
           # { "command" = "dbus-sway-environment"; }
           # { "command" = "configure-gtk"; }
         ];
@@ -100,10 +110,11 @@ rec {
         };
         input = {
           "*".xkb_layout = "fr";
+          "type:touchpad".tap = "enabled";
         };
         output = {
           "*" = {
-            scale = "1";
+            scale = "1.2";
             bg = "${./static/wallpaper.2.jpg} fill";
           };
         };
@@ -116,6 +127,11 @@ rec {
           statusCommand = "SHELL=${pkgs.bash}/bin/bash i3status-rs ~/.config/i3status-rust/config-default.toml";
           position = "top";
           trayOutput = "none";
+
+          fonts = {
+            names = [ ctx.font.default ];
+            size = 10.0;
+          };
 
           colors = {
             statusline = ctx.color.back;
@@ -253,6 +269,8 @@ rec {
         terminal = "alacritty";
       };
       extraConfig = ''
+        # Touchpad configuration
+	input 2362:628:UNIW0001:00_093A:0274_Touchpad middle_emulation enabled
         # Gesture navigation between workspaces
         bindgesture swipe:3:right workspace next
         bindgesture swipe:3:up    workspace next
@@ -314,6 +332,11 @@ rec {
           padding = { x = 4; y = 4; };
         };
       };
+    };
+
+    eza = {
+      enable = true;
+      enableAliases = true;
     };
 
     firefox = {
