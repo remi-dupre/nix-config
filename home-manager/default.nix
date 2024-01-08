@@ -16,7 +16,17 @@ let
       monospace = "FiraMono Nerd Font";
     };
   };
-
+  # Forget sudo password, ssh keys and finaly locks
+  action-lock = "sudo -K && ssh-add -D && swaylock";
+  # Wrapper around grimshot
+  action-screenshot = op: "bash ${./static/scripts/screenshot.sh} ${op}";
+  # Sound control
+  pactl = "${pkgs.pulseaudio}/bin/pactl";
+  pacmd = "${pkgs.pulseaudio}/bin/pacmd";
+  action-sound-mute = op: "${pactl} set-sink-mute @DEFAULT_SINK@ ${op}"; # op is toggle / off / +5% / -5%
+  action-sound-volume = op: "${pactl} set-sink-volume @DEFAULT_SINK@ ${op}"; # op is +5% / -5%
+  action-sound-notify = "bash ${./static/scripts/notify/sound.sh}";
+  action-sound-sample = "pw-play ${./static/sound/volume.ogg}";
 in
 rec {
   home = {
@@ -26,20 +36,33 @@ rec {
     keyboard.layout = "fr";
 
     packages = with pkgs; [
-      # Build base
-      clang
-      # Terminal Apps
-      fzf
+      # Used for scripts
+      pulseaudio
+      sway-contrib.grimshot
+      # Terminal Utilities
+      httpie
       neovim
+      wl-clipboard
+      # Programming
+      cargo
+      clang
+      openssl
+      poetry
+      pkg-config
+      python3
+      # Vim Plugins
+      rnix-lsp
       # Desktop requirements
       (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
       adw-gtk3 # libadwaita theme for GTK3
       font-awesome_4 # used by i3status-rs
       # Desktop
+      gimp
       gnome.nautilus
       pavucontrol
       rofi-wayland
       signal-desktop
+      wdisplays
     ];
 
     sessionVariables = {
@@ -100,6 +123,7 @@ rec {
 
       config = {
         inherit modifier;
+        terminal = "alacritty";
         startup = [
           # { "command" = "dbus-sway-environment"; }
           # { "command" = "configure-gtk"; }
@@ -142,9 +166,28 @@ rec {
         }];
         keybindings =
           lib.mkOptionDefault {
+            # Application shortcuts
+            "${modifier}+l" = "exec ${action-lock}";
+            "Control+Mod1+d" = "exec nautilus";
+            "Control+Mod1+f" = "exec firefox";
+            "Control+Shift+p" = "exec firefox --private-window";
+            "Control+Mod1+s" = "exec pavucontrol";
+            "Control+Mod1+b" = "exec blueman-manager";
+            "Mod1+c" = "exec rofimoji -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-descriptions --selector-args '-theme rofimoji'";
             # Close window
             "Mod1+F2" = "exec rofi -theme ~/.config/rofi/drun.rasi -show";
             "Mod1+F4" = "kill";
+            # Screenshot
+            "Print" = "exec ${action-screenshot "screen"}";
+            "Shift+Print" = "exec ${action-screenshot "area"}";
+            "Control+Print" = "exec ${action-screenshot "window"}";
+            # Sound
+            "XF86AudioRaiseVolume" = "exec '${action-sound-mute "off"} ; ${action-sound-volume "+5%"} ; ${action-sound-notify} ; ${action-sound-sample}'";
+            "XF86AudioLowerVolume" = "exec '${action-sound-mute "off"} ; ${action-sound-volume "-5%"} ; ${action-sound-notify} ; ${action-sound-sample}'";
+            "XF86AudioMute" = "exec '${action-sound-mute "toggle"} ; ${action-sound-notify} ;  ${action-sound-sample}'";
+            # TODO: Microphone
+            # TODO: MPD Control
+            # TODO: Brightness
             # Rebuild config and reload
             "${modifier}+Shift+r" = "swaymsg reload";
             # Always on top window
@@ -209,14 +252,6 @@ rec {
             "${modifier}+Shift+t" = "move container to workspace ";
             # Switch to resize mode
             "${modifier}+r" = "mode resize";
-            # Application shortcuts
-            "Control+Mod1+d" = "exec nautilus";
-            "Control+Mod1+f" = "exec firefox";
-            "Control+Shift+p" = "exec firefox --private-window";
-            "Control+Mod1+s" = "exec pavucontrol";
-            "Control+Mod1+b" = "exec blueman-manager";
-            "Mod1+c" = "exec rofimoji -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-descriptions --selector-args '-theme rofimoji'";
-
             # Change monitor for a workspace
             "Mod1+Left" = "move workspace to output left";
             "Mod1+Right" = "move workspace to output right";
@@ -266,22 +301,17 @@ rec {
         #       text = ctx.color.prim;
         #     };
         #   };
-        terminal = "alacritty";
       };
       extraConfig = ''
-        # Touchpad configuration
-	input 2362:628:UNIW0001:00_093A:0274_Touchpad middle_emulation enabled
-        # Gesture navigation between workspaces
-        bindgesture swipe:3:right workspace next
-        bindgesture swipe:3:up    workspace next
-        bindgesture swipe:3:left  workspace prev
-        bindgesture swipe:3:down  workspace prev
+        bindswitch --reload --locked lid:on exec ${action-lock}
       '';
     };
 
   programs = {
     bat.enable = true;
+    gpg.enable = true;
     home-manager.enable = true;
+    nix-index.enable = true;
 
     alacritty = {
       enable = true;
@@ -349,6 +379,19 @@ rec {
       plugins = [
         { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
       ];
+      shellInit = ''
+        # Fix conflict between fzf default script and fzf.fish plugin
+        # See https://haseebmajid.dev/posts/2023-09-19-til-how-to-use-fzf-fish-history-search/#appendix
+        bind \cr _fzf_search_history
+        bind -M insert \cr _fzf_search_history
+      '';
+    };
+
+    fzf = {
+      enable = true;
+      enableBashIntegration = false; # managed by fish plugin
+      enableFishIntegration = false; # managed by fish plugin
+      enableZshIntegration = false; # managed by fish plugin
     };
 
     git = {
@@ -490,6 +533,10 @@ rec {
       };
     };
 
+    ssh = {
+      addKeysToAgent = "30m";
+    };
+
     starship = {
       enable = true;
       settings = {
@@ -541,10 +588,20 @@ rec {
         };
       };
     };
+
+    swaylock = {
+      enable = true;
+      settings = {
+        image = "~/.wallpaper.jpg";
+        ignore-empty-password = true;
+      };
+    };
   };
+
 
   services = {
     mpris-proxy.enable = true;
+    ssh-agent.enable = true;
 
     dunst = {
       enable = true;
@@ -858,8 +915,35 @@ rec {
 
     gpg-agent = {
       enable = true;
-      defaultCacheTtl = 1800;
+      defaultCacheTtl = 7200; # 2h
       enableSshSupport = true;
+      pinentryFlavor = "curses";
+    };
+
+    swayidle = {
+      enable = true;
+
+      events = [
+        {
+          event = "before-sleep";
+          command = action-lock;
+        }
+        {
+          event = "after-resume";
+          command = ''swaymsg "output * power on"'';
+        }
+      ];
+
+      timeouts = [
+        {
+          timeout = 1795;
+          command = action-lock;
+        }
+        {
+          timeout = 1800;
+          command = ''swaymsg "output * power off"'';
+        }
+      ];
     };
   };
 }
