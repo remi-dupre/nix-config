@@ -17,7 +17,7 @@ let
     };
   };
   # Forget sudo password, ssh keys and finaly locks
-  action-lock = "sudo -K && ssh-add -D && swaylock";
+  action-lock = "sudo -K && ssh-add -D && gpgconf --reload gpg-agent && swaylock";
   # Wrapper around grimshot
   action-screenshot = op: "bash ${./static/scripts/screenshot.sh} ${op}";
   # Sound control
@@ -47,17 +47,22 @@ rec {
       cargo
       clang
       openssl
-      poetry
       pkg-config
+      poetry
       python3
+      python311Packages.python-lsp-server
+      ruff-lsp
       # Vim Plugins
       rnix-lsp
       # Desktop requirements
       (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
       adw-gtk3 # libadwaita theme for GTK3
       font-awesome_4 # used by i3status-rs
+      xdg-utils # for opening default programs when clicking links
       # Desktop
+      evince
       gimp
+      globalprotect-openconnect
       gnome.nautilus
       pavucontrol
       rofi-wayland
@@ -605,11 +610,10 @@ rec {
 
     dunst = {
       enable = true;
-      iconTheme =
-        {
-          name = "Adwaita";
-          package = pkgs.gnome.adwaita-icon-theme;
-        };
+      iconTheme = {
+        name = "Adwaita";
+        package = pkgs.gnome.adwaita-icon-theme;
+      };
       settings = {
         global = {
           ### Display ###
@@ -916,7 +920,6 @@ rec {
     gpg-agent = {
       enable = true;
       defaultCacheTtl = 7200; # 2h
-      enableSshSupport = true;
       pinentryFlavor = "curses";
     };
 

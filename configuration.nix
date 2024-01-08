@@ -71,6 +71,7 @@
 
   programs.sway = {
     enable = true;
+    extraPackages = [ ];
   };
 
   services = {
@@ -94,8 +95,6 @@
     # Prevents overheating on Intel CPUs
     thermald.enable = true;
 
-    # Power management
-    tlp.enable = true;
 
     # Multimedia support
     pipewire = {
@@ -104,6 +103,7 @@
       pulse.enable = true;
     };
 
+    # Session manager
     greetd = {
       enable = true;
       settings = rec {
@@ -114,6 +114,17 @@
         };
         default_session = initial_session;
       };
+    };
+
+    # Power management
+    tlp = {
+      enable = true;
+      settings = {
+        # Help save long term battery health
+        # START_CHARGE_THRESH_BAT0 = 40; # 40 and bellow it starts to charge
+        # STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
+      };
+
     };
   };
 
