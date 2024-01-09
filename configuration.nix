@@ -99,12 +99,8 @@
     gnome.tracker.enable = true;
     gnome.tracker-miners.enable = true;
 
-    # Required for gpg prompt
-    pcscd.enable = true;
-
     # Prevents overheating on Intel CPUs
     thermald.enable = true;
-
 
     # Multimedia support
     pipewire = {
