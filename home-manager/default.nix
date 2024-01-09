@@ -26,9 +26,13 @@ let
   action-sound-mute = op: "${pactl} set-sink-mute @DEFAULT_SINK@ ${op}"; # op is toggle / off / +5% / -5%
   action-sound-volume = op: "${pactl} set-sink-volume @DEFAULT_SINK@ ${op}"; # op is +5% / -5%
   action-sound-notify = "bash ${./static/scripts/notify/sound.sh}";
-  action-sound-sample = "pw-play ${./static/sound/volume.ogg}";
+  action-sample = op: "pw-play ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/${op}.oga";
+  # action-brightness-change = op: "${pactl} set-sink-volume @DEFAULT_SINK@ ${op}"; # op is +5% / -5%
+  # action-brightness-notify = "bash ${./static/scripts/notify/brightness.sh}";
 in
 rec {
+  nixpkgs.config.allowUnfree = true;
+
   home = {
     username = ctx.user;
     homeDirectory = "/home/${ctx.user}";
@@ -46,12 +50,18 @@ rec {
       # Programming
       cargo
       clang
+      helm-docs
       openssl
       pkg-config
+      (pkgs.wrapHelm pkgs.kubernetes-helm { plugins = [ pkgs.kubernetes-helmPlugins.helm-secrets ]; })
       poetry
+      pre-commit
       python3
       python311Packages.python-lsp-server
+      ruff
       ruff-lsp
+      sops
+      yaml-language-server
       # Vim Plugins
       rnix-lsp
       # Desktop requirements
@@ -65,6 +75,7 @@ rec {
       globalprotect-openconnect
       gnome.nautilus
       pavucontrol
+      qgis
       rofi-wayland
       signal-desktop
       wdisplays
@@ -72,6 +83,10 @@ rec {
 
     sessionVariables = {
       GTK_THEME = "adw-gtk3-dark";
+
+      # Required for some Python libraries to work
+      # See https://discourse.nixos.org/t/how-to-solve-libstdc-not-found-in-shell-nix/25458/15
+      LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
     };
 
     shellAliases = {
@@ -147,6 +162,18 @@ rec {
             bg = "${./static/wallpaper.2.jpg} fill";
           };
         };
+        floating = {
+          criteria = [
+            { app_id = "blueman-manager"; }
+            { app_id = "pavucontrol"; }
+            { app_id = "signal"; }
+            { app_id = "wdisplays"; }
+            { instance = "protonmail-bridge"; }
+            { title = "Extension:*"; }
+            { title = "Firefox Developer Edition — Sharing Indicator"; }
+            { title = "Firefox — Sharing Indicator"; }
+          ];
+        };
         window = {
           hideEdgeBorders = "both";
           border = 1;
@@ -174,8 +201,8 @@ rec {
             # Application shortcuts
             "${modifier}+l" = "exec ${action-lock}";
             "Control+Mod1+d" = "exec nautilus";
-            "Control+Mod1+f" = "exec firefox";
-            "Control+Shift+p" = "exec firefox --private-window";
+            "Control+Mod1+f" = "exec firefox-devedition";
+            "Control+Shift+p" = "exec firefox-devedition --private-window";
             "Control+Mod1+s" = "exec pavucontrol";
             "Control+Mod1+b" = "exec blueman-manager";
             "Mod1+c" = "exec rofimoji -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-descriptions --selector-args '-theme rofimoji'";
@@ -183,13 +210,13 @@ rec {
             "Mod1+F2" = "exec rofi -theme ~/.config/rofi/drun.rasi -show";
             "Mod1+F4" = "kill";
             # Screenshot
-            "Print" = "exec ${action-screenshot "screen"}";
-            "Shift+Print" = "exec ${action-screenshot "area"}";
-            "Control+Print" = "exec ${action-screenshot "window"}";
+            "Print" = "exec ${action-screenshot "screen"} && ${action-sample "camera-shutter"}";
+            "Shift+Print" = "exec ${action-screenshot "area"} && ${action-sample "camera-shutter"}";
+            "Control+Print" = "exec ${action-screenshot "window"} && ${action-sample "camera-shutter"}";
             # Sound
-            "XF86AudioRaiseVolume" = "exec '${action-sound-mute "off"} ; ${action-sound-volume "+5%"} ; ${action-sound-notify} ; ${action-sound-sample}'";
-            "XF86AudioLowerVolume" = "exec '${action-sound-mute "off"} ; ${action-sound-volume "-5%"} ; ${action-sound-notify} ; ${action-sound-sample}'";
-            "XF86AudioMute" = "exec '${action-sound-mute "toggle"} ; ${action-sound-notify} ;  ${action-sound-sample}'";
+            "XF86AudioRaiseVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "+5%"} & ${action-sound-notify} & ${action-sample "audio-volume-change"}'";
+            "XF86AudioLowerVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "-5%"} & ${action-sound-notify} & ${action-sample "audio-volume-change"}'";
+            "XF86AudioMute" = "exec '${action-sound-mute "toggle"} & ${action-sound-notify} & ${action-sample "audio-volume-change"}'";
             # TODO: Microphone
             # TODO: MPD Control
             # TODO: Brightness
@@ -462,8 +489,20 @@ rec {
             ++
             spacers 30 ""
             ++
+            lib.lists.forEach
+              [
+                { mac = "00:00:AB:CD:55:75"; name = "FP Earbuds"; }
+                { mac = "04:21:44:49:4C:C6"; name = "HyperX"; }
+                { mac = "5C:EB:68:70:9E:9E"; name = "Platan"; }
+              ]
+              (device: with device; {
+                inherit mac;
+                block = "bluetooth";
+                format = "$icon ${name}{ $percentage|}  ⁞ ";
+                disconnected_format = "";
+              })
+            ++
             [
-              # TODO: bluetooth
               {
                 block = "net";
                 format = "^icon_net_down$speed_down.eng(prefix:K) ^icon_net_up$speed_up.eng(prefix:K)";
@@ -613,6 +652,7 @@ rec {
       iconTheme = {
         name = "Adwaita";
         package = pkgs.gnome.adwaita-icon-theme;
+        size = "symbolic";
       };
       settings = {
         global = {
@@ -827,7 +867,7 @@ rec {
           dmenu = "dmenu -p dunst";
 
           # Browser for opening urls in context menu.
-          browser = "firefox -new-tab";
+          browser = "firefox-devedition -new-tab";
 
           # Always run rule-defined scripts, even if the notification is suppressed
           always_run_script = true;

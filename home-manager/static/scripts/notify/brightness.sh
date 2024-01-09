@@ -8,24 +8,11 @@ brightness() {
     echo $((100 * `brightnessctl get` / `brightnessctl max`))
 }
 
-# Build progress bar
-if [ `brightness` -gt "80" ] ; then
-    force="full"
-elif [ `brightness` -gt "60" ] ; then
-    force="high"
-elif [ `brightness` -gt "40" ] ; then
-    force="medium"
-elif [ `brightness` -gt "20" ] ; then
-    force="low"
-else
-    force="off"
-fi
-
 NOTIF_ID=$(
     dunstify --printid \
              --hints "int:value:$(brightness)" \
              --replace=$NOTIF_ID \
-             --icon=notification-display-brightness-$force \
+             --icon=display-brightness-symbolic \
              --urgency=low \
              --timeout=1000 "Brightness" "`brightness` %"
 )

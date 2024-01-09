@@ -67,11 +67,21 @@
     shell = pkgs.fish;
   };
 
-  programs.fish.enable = true;
+  programs = {
+    fish.enable = true;
 
-  programs.sway = {
-    enable = true;
-    extraPackages = [ ];
+    nix-ld = {
+      enable = true;
+
+      libraries = with pkgs; [
+        openssl
+      ];
+    };
+
+    sway = {
+      enable = true;
+      extraPackages = [ ];
+    };
   };
 
   services = {

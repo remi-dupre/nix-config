@@ -29,14 +29,16 @@ muted() {
 }
 
 # Notification attributes
-if [ `volume` -gt "75" ]; then
+if [ `volume` -gt "101" ]; then
+    force="overamplified"
+elif [ `volume` -gt "70" ]; then
     force="high"
-elif [ `volume` -gt "50" ]; then
+elif [ `volume` -gt "35" ]; then
     force="medium"
-elif [ `volume` -gt "25" ]; then
+elif [ `volume` -gt "1" ]; then
     force="low"
 else
-    force="off"
+    force="muted"
 fi
 
 if [ `volume` -gt "100" ]; then
@@ -52,7 +54,7 @@ if [ `muted` = "yes" ]; then
     NOTIF_ID=$(
         dunstify --printid \
                  --replace=$NOTIF_ID \
-                 --icon=notification-audio-volume-muted \
+                 --icon=audio-volume-muted-symbolic \
                  --urgency=low \
                  --timeout=1000 \
                  "`name`" "Off" \
@@ -63,7 +65,7 @@ else
         dunstify --printid \
                  --hints "int:value:$(volume)" \
                  --replace=$NOTIF_ID \
-                 --icon=notification-audio-volume-$force \
+                 --icon=audio-volume-$force-symbolic \
                  --urgency=$urgency \
                  --timeout=1000 \
                  "`name`" "`volume`%" \
