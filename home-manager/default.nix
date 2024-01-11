@@ -224,6 +224,7 @@ rec {
       # Programming
       cargo
       gcc
+      gitleaks
       helm-docs
       openssl
       pkg-config
@@ -266,6 +267,7 @@ rec {
     shellAliases = {
       vim = "nvim";
       l = "ll";
+      utnm = "poetry run -C ~/code/libraries/utnm utnm";
     };
 
     pointerCursor = {

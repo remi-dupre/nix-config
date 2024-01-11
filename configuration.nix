@@ -12,13 +12,19 @@
     ./disko-partitioning.nix
   ];
 
+  # Can be removed with systemd 255
+  # See https://github.com/NixOS/nixpkgs/issues/276374
+  systemd.services.systemd-logind.environment = {
+    SYSTEMD_BYPASS_HIBERNATION_MEMORY_CHECK = "1";
+  };
+
   zramSwap.enable = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   hardware = {
     bluetooth = {
       enable = true; # enables support for Bluetooth
-      powerOnBoot = true; # powers up the default Bluetooth controller on boot
+      powerOnBoot = false; # powers up the default Bluetooth controller on boot
     };
   };
 
@@ -123,12 +129,33 @@
     };
 
     # Power management
+    auto-cpufreq = {
+      enable = true;
+      settings = {
+        battery = {
+          governor = "powersave";
+          turbo = "never";
+        };
+        charger = {
+          governor = "performance";
+          turbo = "auto";
+        };
+      };
+    };
+
     tlp = {
       enable = true;
       settings = {
         # Help save long term battery health
-        # START_CHARGE_THRESH_BAT0 = 40; # 40 and bellow it starts to charge
-        # STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
+        START_CHARGE_THRESH_BAT0 = 94;
+        STOP_CHARGE_THRESH_BAT0 = 98;
+        # Device management
+        DEVICES_TO_ENABLE_ON_STARTUP = "wifi";
+        DEVICES_TO_DISABLE_ON_STARTUP = "bluetooth nfc wwan";
+        DEVICES_TO_DISABLE_ON_SHUTDOWN = "bluetooth nfc wifi wwan";
+        DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE = "bluetooth nfc wifi wwan";
+        DEVICES_TO_DISABLE_ON_WIFI_CONNECT = "wwan";
+        DEVICES_TO_DISABLE_ON_WWAN_CONNECT = "wifi";
       };
 
     };
