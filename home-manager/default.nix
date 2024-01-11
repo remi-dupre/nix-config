@@ -4,6 +4,11 @@ let
   ctx = {
     user = "remi";
     email = "remi@dupre.io";
+    screen = {
+      width = 2560;
+      height = 1600;
+      scale = 1.20;
+    };
     color = {
       back = "#000000"; # background color
       prim = "#2e2f5d"; # primary color for accents
@@ -17,8 +22,19 @@ let
     };
   };
 
+  # Locations
+  path-lock-wallpaper = "~/.lock-wallpaper.png";
+
+  # Fonts
+  fonts-pkg = pkgs.nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; };
+  fonts-dir = "${fonts-pkg}/share/fonts/truetype/NerdFonts";
+
+  # Binaries
+  blueman-manager = "${pkgs.blueman}/bin/blueman-manager";
+  bluetoothctl = "${pkgs.bluez}/bin/bluetoothctl";
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
   dunstify = "${pkgs.dunst}/bin/dunstify";
+  firefox = "${pkgs.firefox-devedition}/bin/firefox-devedition";
   grimshot = "${pkgs.sway-contrib.grimshot}/bin/grimshot";
   pacmd = "${pkgs.pulseaudio}/bin/pacmd";
   pactl = "${pkgs.pulseaudio}/bin/pactl";
@@ -35,7 +51,6 @@ let
     ${wl-paste} > $OUTPUT_FILE
     ${dunstify} --icon $OUTPUT_FILE "Saved ${mode} to clipboard" "$OUTPUT_FILE"
   '';
-
 
   # Notify of current brightness
   notify-brightness = pkgs.writeShellScript "notify-brightness" ''
@@ -129,6 +144,7 @@ let
     echo $notif_id > $ID_FILE
   '';
 
+  # Notify of current microphone level
   action-notify-micro = pkgs.writeShellScript "notify-micro" ''
     ID_FILE=/tmp/.notif_microphone_id
 
@@ -195,6 +211,17 @@ let
     echo $notif_id > $ID_FILE
   '';
 
+  # Load lock wallpaper from bing image
+  action-update-wallpaper = pkgs.writers.writePython3
+    "update-wallpaper"
+    {
+      libraries = with pkgs.python3Packages; [
+        pillow
+        pyyaml
+      ];
+    }
+    (builtins.readFile ./static/scripts/update-wallpaper.py);
+
   # Forget sudo password, ssh keys and finaly locks
   action-lock = "sudo -K && ssh-add -D && gpgconf --reload gpg-agent && swaylock";
   # Sound control
@@ -241,9 +268,9 @@ rec {
       # Vim Plugins
       rnix-lsp
       # Desktop requirements
-      (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
       adw-gtk3 # libadwaita theme for GTK3
       font-awesome_4 # used by i3status-rs
+      fonts-pkg # built from nerdfonts
       xdg-utils # for opening default programs when clicking links
       # Desktop
       evince
@@ -326,8 +353,11 @@ rec {
         inherit modifier;
         terminal = "alacritty";
         startup = [
-          # { "command" = "dbus-sway-environment"; }
-          # { "command" = "configure-gtk"; }
+          {
+            command = ''
+              ${action-update-wallpaper} ${toString ctx.screen.width} ${toString ctx.screen.height} ${fonts-dir}/NotoSansNerdFont-Regular.ttf ${path-lock-wallpaper}
+            '';
+          }
         ];
         fonts = {
           names = [ ctx.font.default ];
@@ -339,8 +369,8 @@ rec {
         };
         output = {
           "*" = {
-            scale = "1.2";
-            bg = "${./static/wallpaper.2.jpg} fill";
+            scale = toString ctx.screen.scale;
+            bg = "${./static/wallpaper.jpg} fill";
           };
         };
         floating = {
@@ -382,10 +412,10 @@ rec {
             # Application shortcuts
             "${modifier}+l" = "exec ${action-lock}";
             "Control+Mod1+d" = "exec nautilus";
-            "Control+Mod1+f" = "exec firefox-devedition";
-            "Control+Shift+p" = "exec firefox-devedition --private-window";
+            "Control+Mod1+f" = "exec ${firefox}";
+            "Control+Shift+p" = "exec ${firefox} --private-window";
             "Control+Mod1+s" = "exec pavucontrol";
-            "Control+Mod1+b" = "exec ${pkgs.bluez}/bin/bluetoothctl power on && ${pkgs.blueman}/bin/blueman-manager";
+            "Control+Mod1+b" = "exec ${bluetoothctl} power on && ${blueman-manager}";
             # Close window
             "Mod1+F2" = "exec ${rofi} -theme ~/.config/rofi/drun.rasi -show";
             "Mod1+c" = "exec ${rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description";
@@ -415,7 +445,14 @@ rec {
             # Always on top window
             "${modifier}+w" = "sticky toggle";
             # Stick and resize
-            "${modifier}+Shift+w" = "floating enable; sticky enable; border none; resize set 624 351; move position {{ (monitor.width / sway.scale - 634) | int }} 0";
+            "${modifier}+Shift+w" =
+              let
+                ratio = 0.18;
+                height = ratio * ctx.screen.height;
+                width = ratio * ctx.screen.width;
+                pos-x = ctx.screen.width / ctx.screen.scale - width;
+              in
+              "floating enable; sticky enable; border none; resize set ${toString width} ${toString height}; move position ${toString width} 0";
             # Shutdown button
             "XF86PowerOff" = "exec shutdown -h now";
             # Change focus
@@ -872,7 +909,7 @@ rec {
     swaylock = {
       enable = true;
       settings = {
-        image = "~/.wallpaper.jpg";
+        image = "${path-lock-wallpaper}";
         ignore-empty-password = true;
       };
     };
@@ -1103,7 +1140,7 @@ rec {
           dmenu = "dmenu -p dunst";
 
           # Browser for opening urls in context menu.
-          browser = "firefox-devedition -new-tab";
+          browser = "${firefox} -new-tab";
 
           # Always run rule-defined scripts, even if the notification is suppressed
           always_run_script = true;

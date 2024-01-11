@@ -12,12 +12,6 @@
     ./disko-partitioning.nix
   ];
 
-  # Can be removed with systemd 255
-  # See https://github.com/NixOS/nixpkgs/issues/276374
-  systemd.services.systemd-logind.environment = {
-    SYSTEMD_BYPASS_HIBERNATION_MEMORY_CHECK = "1";
-  };
-
   zramSwap.enable = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -30,6 +24,8 @@
 
   security = {
     polkit.enable = true;
+    rtkit.enable = true; # recommanded with pipewire
+
     pam.loginLimits = [
       { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
     ];
