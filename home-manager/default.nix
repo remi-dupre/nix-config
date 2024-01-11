@@ -218,6 +218,7 @@ rec {
       # Terminal Utilities
       httpie
       neovim
+      ripgrep
       unzip
       wl-clipboard
       zip
@@ -248,6 +249,7 @@ rec {
       evince
       gimp
       globalprotect-openconnect
+      gnome.file-roller
       gnome.nautilus
       pavucontrol
       qgis
@@ -262,6 +264,9 @@ rec {
       # Required for some Python libraries to work
       # See https://discourse.nixos.org/t/how-to-solve-libstdc-not-found-in-shell-nix/25458/15
       LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
+
+      # See https://nixos.wiki/wiki/Wayland
+      NIXOS_OZONE_WL = "1";
     };
 
     shellAliases = {
@@ -380,7 +385,7 @@ rec {
             "Control+Mod1+f" = "exec firefox-devedition";
             "Control+Shift+p" = "exec firefox-devedition --private-window";
             "Control+Mod1+s" = "exec pavucontrol";
-            "Control+Mod1+b" = "exec blueman-manager";
+            "Control+Mod1+b" = "exec ${pkgs.bluez}/bin/bluetoothctl power on && ${pkgs.blueman}/bin/blueman-manager";
             # Close window
             "Mod1+F2" = "exec ${rofi} -theme ~/.config/rofi/drun.rasi -show";
             "Mod1+c" = "exec ${rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description";
@@ -526,6 +531,7 @@ rec {
 
   programs = {
     bat.enable = true;
+    direnv.enable = true;
     gpg.enable = true;
     home-manager.enable = true;
     nix-index.enable = true;

@@ -35,6 +35,9 @@
     ];
   };
 
+  # Docker
+  virtualisation.docker.enable = true;
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -69,7 +72,7 @@
   users.users.remi = {
     isNormalUser = true;
     description = "Rémi Dupré";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "docker" "networkmanager" "wheel" ];
     shell = pkgs.fish;
   };
 
@@ -96,6 +99,9 @@
 
     # Required by xdg portal
     dbus.enable = true;
+
+    # VPN capabilities
+    globalprotect.enable = true;
 
     # Required by nautilus for trash management
     gvfs.enable = true;
@@ -177,7 +183,12 @@
   nixpkgs.config.allowUnfree = true;
 
   environment = {
-    systemPackages = with pkgs; [ neovim ];
+    systemPackages = with pkgs; [
+      neovim
+      # Dev Libraries
+      geos
+      gdal
+    ];
 
     variables = {
       EDITOR = "nvim";
