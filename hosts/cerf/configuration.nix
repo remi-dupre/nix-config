@@ -6,9 +6,9 @@
 
 {
   imports = [
-    ./hardware-configuration.nix # Include the results of the hardware scan.
     home-manager.nixosModules.home-manager
     disko.nixosModules.disko
+    ./hardware-configuration.nix # Include the results of the hardware scan.
     ./disko-partitioning.nix
   ];
 
@@ -173,7 +173,7 @@
 
   # Include homemanager config
   home-manager.users.remi = {
-    imports = [ ./home-manager ];
+    imports = [ ../../home-manager ];
   };
 
   # Allow unfree packages
