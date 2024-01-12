@@ -353,6 +353,7 @@ rec {
         inherit modifier;
         terminal = "alacritty";
         startup = [
+          { command = "swaymsg split v"; }
           {
             command = ''
               ${action-update-wallpaper} ${toString ctx.screen.width} ${toString ctx.screen.height} ${fonts-dir}/NotoSansNerdFont-Regular.ttf ${path-lock-wallpaper}
@@ -447,12 +448,13 @@ rec {
             # Stick and resize
             "${modifier}+Shift+w" =
               let
-                ratio = 0.18;
-                height = ratio * ctx.screen.height;
-                width = ratio * ctx.screen.width;
-                pos-x = ctx.screen.width / ctx.screen.scale - width;
+                ratio = 0.20;
+                margin = 25;
+                width = builtins.floor (ratio * ctx.screen.width);
+                height = builtins.floor (width * 9 / 16);
+                pos-x = builtins.floor (ctx.screen.width / ctx.screen.scale - width - margin);
               in
-              "floating enable; sticky enable; border none; resize set ${toString width} ${toString height}; move position ${toString width} 0";
+              "floating enable; sticky enable; resize set ${toString width} ${toString height}; move position ${toString pos-x} ${toString margin}";
             # Shutdown button
             "XF86PowerOff" = "exec shutdown -h now";
             # Change focus
@@ -761,6 +763,24 @@ rec {
             ]
             ++
             spacers 30 ""
+            ++ [{
+              block = "custom";
+              command = "${bluetoothctl} show | grep -o 'Powered: yes' > /dev/null && echo -n ''";
+              format = "$text.pango-str()";
+              interval = 1;
+
+              click = [
+                {
+                  button = "left";
+                  cmd = "${blueman-manager}";
+                }
+                {
+                  button = "right";
+                  cmd = "${bluetoothctl} power off";
+                  update = true;
+                }
+              ];
+            }]
             ++
             lib.lists.forEach
               [
@@ -771,8 +791,13 @@ rec {
               (device: with device; {
                 inherit mac;
                 block = "bluetooth";
-                format = "$icon ${name}{ $percentage|}  ⁞ ";
+                format = "${name}{ $percentage|}  ⁞ ";
                 disconnected_format = "";
+
+                click = [{
+                  button = "left";
+                  cmd = "${blueman-manager}";
+                }];
               })
             ++
             [

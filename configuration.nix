@@ -153,9 +153,6 @@
         STOP_CHARGE_THRESH_BAT0 = 98;
         # Device management
         DEVICES_TO_ENABLE_ON_STARTUP = "wifi";
-        DEVICES_TO_DISABLE_ON_STARTUP = "bluetooth nfc wwan";
-        DEVICES_TO_DISABLE_ON_SHUTDOWN = "bluetooth nfc wifi wwan";
-        DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE = "bluetooth nfc wifi wwan";
         DEVICES_TO_DISABLE_ON_WIFI_CONNECT = "wwan";
         DEVICES_TO_DISABLE_ON_WWAN_CONNECT = "wifi";
       };
