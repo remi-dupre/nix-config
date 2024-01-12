@@ -18,6 +18,7 @@ let
     };
     font = {
       default = "NotoSans Nerd Font";
+      compact = "NotoSans Nerd Font SemiCondensed";
       monospace = "FiraMono Nerd Font";
     };
   };
@@ -36,12 +37,18 @@ let
   dunstify = "${pkgs.dunst}/bin/dunstify";
   firefox = "${pkgs.firefox-devedition}/bin/firefox-devedition";
   grimshot = "${pkgs.sway-contrib.grimshot}/bin/grimshot";
+  nom = "${pkgs.nix-output-monitor}/bin/nom";
   pacmd = "${pkgs.pulseaudio}/bin/pacmd";
   pactl = "${pkgs.pulseaudio}/bin/pactl";
   playerctl = "${pkgs.playerctl}/bin/playerctl";
   rofi = "${pkgs.rofi-wayland}/bin/rofi";
   rofimoji = "${pkgs.rofimoji}/bin/rofimoji";
   wl-paste = "${pkgs.wl-clipboard}/bin/wl-paste";
+
+  # Update nixos config
+  pkg-config-rebuild = pkgs.writeScriptBin "config-rebuild" ''
+    nixos-rebuild switch --print-build-logs --log-format internal-json --flake $1 |& ${nom} --json
+  '';
 
   # Take a a screenshot
   action-screenshot = mode: pkgs.writeShellScript "screenshot-${mode}" ''
@@ -243,6 +250,7 @@ rec {
 
     packages = with pkgs; [
       # Terminal Utilities
+      pkg-config-rebuild
       httpie
       neovim
       ripgrep
@@ -297,9 +305,9 @@ rec {
     };
 
     shellAliases = {
-      vim = "nvim";
       l = "ll";
       utnm = "poetry run -C ~/code/libraries/utnm utnm";
+      vim = "nvim";
     };
 
     pointerCursor = {
@@ -378,7 +386,6 @@ rec {
           criteria = [
             { app_id = "blueman-manager"; }
             { app_id = "pavucontrol"; }
-            { app_id = "signal"; }
             { app_id = "wdisplays"; }
             { instance = "protonmail-bridge"; }
             { title = "Extension:*"; }
@@ -397,7 +404,7 @@ rec {
           trayOutput = "none";
 
           fonts = {
-            names = [ ctx.font.default ];
+            names = [ ctx.font.compact ];
             size = 10.0;
           };
 
@@ -535,33 +542,6 @@ rec {
               "Escape" = "mode default";
             };
           };
-        # colors =
-        #   let
-        #     base = {
-        #       background = ctx.color.fdim;
-        #       border = ctx.color.fdim;
-        #       childBorder = "#00000000";
-        #       indicator = ctx.color.fdim;
-        #       text = ctx.color.font;
-        #     };
-        #   in
-        #   {
-        #     focusedInactive = base;
-        #     placeholder = base;
-        #     focused = {
-        #       inherit (base) border indicator childBorder;
-        #       background = ctx.color.prim;
-        #       text = ctx.color.fbri;
-        #     };
-        #     unfocused = {
-        #       inherit (base) background border indicator childBorder;
-        #       text = ctx.color.fbri;
-        #     };
-        #     urgent = {
-        #       inherit (base) background border childBorder indicator;
-        #       text = ctx.color.prim;
-        #     };
-        #   };
       };
       extraConfig = ''
         bindswitch --reload --locked lid:on exec ${action-lock}
@@ -754,35 +734,32 @@ rec {
                 size: char: lib.lists.forEach
                   (lib.lists.range 1 size)
                   (_: spacer char);
-            in
-            [
-              {
-                block = "focused_window";
-                format = "<b>$title.str(max_w:120)</b>|";
-              }
-            ]
-            ++
-            spacers 30 ""
-            ++ [{
-              block = "custom";
-              command = "${bluetoothctl} show | grep -o 'Powered: yes' > /dev/null && echo -n ''";
-              format = "$text.pango-str()";
-              interval = 1;
+              bluetooth-activated = text: {
+                block = "custom";
+                command = "${bluetoothctl} show | grep -o 'Powered: yes' > /dev/null && echo -n '${text}'";
+                format = "$text.pango-str()";
+                interval = 1;
 
-              click = [
-                {
-                  button = "left";
-                  cmd = "${blueman-manager}";
-                }
-                {
-                  button = "right";
-                  cmd = "${bluetoothctl} power off";
-                  update = true;
-                }
-              ];
+                click = [
+                  {
+                    button = "left";
+                    cmd = "${blueman-manager}";
+                  }
+                  {
+                    button = "right";
+                    cmd = "${bluetoothctl} power off";
+                    update = true;
+                  }
+                ];
+              };
+            in
+            [{
+              block = "focused_window";
+              format = "<b>$title.str(max_w:120)</b>|";
             }]
-            ++
-            lib.lists.forEach
+            ++ spacers 30 ""
+            ++ [ (bluetooth-activated "") ]
+            ++ lib.lists.forEach
               [
                 { mac = "00:00:AB:CD:55:75"; name = "FP Earbuds"; }
                 { mac = "04:21:44:49:4C:C6"; name = "HyperX"; }
@@ -791,7 +768,7 @@ rec {
               (device: with device; {
                 inherit mac;
                 block = "bluetooth";
-                format = "${name}{ $percentage|}  ⁞ ";
+                format = "${name}{ $percentage|}";
                 disconnected_format = "";
 
                 click = [{
@@ -799,8 +776,8 @@ rec {
                   cmd = "${blueman-manager}";
                 }];
               })
-            ++
-            [
+            ++ [ (bluetooth-activated "⁞") ]
+            ++ [
               {
                 block = "net";
                 format = "^icon_net_down$speed_down.eng(prefix:K) ^icon_net_up$speed_up.eng(prefix:K)";
@@ -808,7 +785,7 @@ rec {
               }
               {
                 block = "custom";
-                command = "echo ⇄ $(ping -c1 8.8.8.8 | perl -nle '/time=(\\d+)/ && print $1')ms";
+                command = "echo -n ⇄ $(ping -c1 8.8.8.8 | perl -nle '/time=(\\d+)/ && print $1')ms";
                 interval = 60;
               }
               (spacer "⁞")

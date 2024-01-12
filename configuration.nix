@@ -19,6 +19,10 @@
     bluetooth = {
       enable = true; # enables support for Bluetooth
       powerOnBoot = false; # powers up the default Bluetooth controller on boot
+
+      # Allow to fetch battery level for connected devices
+      # https://nixos.wiki/wiki/Bluetooth#Showing_battery_charge_of_bluetooth_devices
+      settings.General.Experimental = true;
     };
   };
 
