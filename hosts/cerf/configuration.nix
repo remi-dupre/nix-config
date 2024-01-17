@@ -26,6 +26,21 @@
     };
   };
 
+  fonts = {
+    fontconfig = {
+      enable = true;
+
+      defaultFonts = {
+        serif = [ "NotoSerif Nerd Font" ];
+        sansSerif = [ "NotoSans Nerd Font" ];
+      };
+    };
+
+    packages = with pkgs; [
+      (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+    ];
+  };
+
   security = {
     polkit.enable = true;
     rtkit.enable = true; # recommanded with pipewire

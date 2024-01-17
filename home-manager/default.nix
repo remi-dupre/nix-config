@@ -254,12 +254,14 @@ rec {
 
     packages = with pkgs; [
       # Terminal Utilities
-      pkg-config-rebuild
       httpie
+      jq
       neovim
+      pkg-config-rebuild
       ripgrep
       unzip
       wl-clipboard
+      yq
       zip
       # Programming
       cargo
@@ -281,8 +283,6 @@ rec {
       rnix-lsp
       # Desktop requirements
       adw-gtk3 # libadwaita theme for GTK3
-      font-awesome_4 # used by i3status-rs
-      fonts-pkg # built from nerdfonts
       xdg-utils # for opening default programs when clicking links
       # Desktop
       evince
@@ -290,9 +290,9 @@ rec {
       globalprotect-openconnect
       gnome.file-roller
       gnome.nautilus
+      libreoffice
       pavucontrol
       qgis
-
       signal-desktop
       wdisplays
     ];
@@ -675,6 +675,8 @@ rec {
               icons = "awesome4";
               overrides = {
                 net_wireless = "";
+                net_up = "";
+                net_down = "";
                 backlight = [ "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ];
               };
             };
@@ -766,7 +768,7 @@ rec {
               (spacer "⁞")
               {
                 block = "hueshift";
-                hue_shifter = "gammastep";
+                # hue_shifter = "gammastep";
                 format = "☀ $temperature";
                 step = 50;
                 click_temp = 3500;
@@ -778,7 +780,7 @@ rec {
               {
                 block = "battery";
                 interval = 1;
-                format = "$icon  $percentage";
+                format = "$icon   $percentage";
                 full_format = "";
                 empty_format = "";
                 full_threshold = 100;
@@ -1192,6 +1194,13 @@ rec {
       enable = true;
       defaultCacheTtl = 7200; # 2h
       pinentryFlavor = "curses";
+    };
+
+    gammastep = {
+      enable = true;
+      # Paris
+      latitude = 48.864;
+      longitude = 2.349;
     };
 
     swayidle = {
