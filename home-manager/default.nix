@@ -329,10 +329,36 @@ rec {
     };
   };
 
-  xdg.userDirs = {
-    desktop = "/tmp";
-    documents = "${config.home.homeDirectory}/documents";
-    download = "${config.home.homeDirectory}/downloads";
+  xdg = {
+    desktopEntries.nvim = {
+      name = "NeoVim";
+      exec = "foot nvim %F";
+      type = "Application";
+      icon = "nvim";
+      mimeType = [
+        "text/english"
+        "text/plain"
+        "text/x-makefile"
+        "text/x-c++hdr"
+        "text/x-c++src"
+        "text/x-chdr"
+        "text/x-csrc"
+        "text/x-java"
+        "text/x-moc"
+        "text/x-pascal"
+        "text/x-tcl"
+        "text/x-tex"
+        "application/x-shellscript"
+        "text/x-c"
+        "text/x-c++"
+      ];
+    };
+    userDirs = {
+      enable = true;
+      desktop = "/tmp";
+      documents = "${config.home.homeDirectory}/documents";
+      download = "${config.home.homeDirectory}/downloads";
+    };
   };
 
   gtk.gtk3.bookmarks = [
@@ -349,6 +375,7 @@ rec {
     };
   };
 
+
   wayland.windowManager.sway =
     let
       modifier = "Mod4";
@@ -363,7 +390,7 @@ rec {
 
       config = {
         inherit modifier;
-        terminal = "alacritty";
+        terminal = "foot";
         startup = [
           { command = "swaymsg split v"; }
           {
@@ -559,57 +586,6 @@ rec {
     home-manager.enable = true;
     nix-index.enable = true;
 
-    alacritty = {
-      enable = true;
-      settings = {
-        colors = {
-          draw_bold_text_with_bright_colors = true;
-          bright = {
-            black = "#666666";
-            blue = "#387CD3";
-            cyan = "#3D97E2";
-            green = "#77B869";
-            magenta = "#957BBE";
-            red = "#E05A4F";
-            white = "#BABABA";
-            yellow = "#EFD64B";
-          };
-          normal = {
-            black = "#000000";
-            blue = "#1C98E8";
-            cyan = "#1C98E8";
-            green = "#68C256";
-            magenta = "#8E69C9";
-            red = "#E8341C";
-            white = "#BABABA";
-            yellow = "#F2D42C";
-          };
-          primary = {
-            background = ctx.color.back;
-            foreground = ctx.color.font;
-          };
-        };
-        cursor = {
-          style = "Block";
-          unfocused_hollow = true;
-        };
-        env = {
-          TERM = "xterm-256color";
-        };
-        font = {
-          size = 10.5;
-          bold.family = ctx.font.monospace;
-          bold_italic.family = ctx.font.monospace;
-          italic.family = ctx.font.monospace;
-          normal.family = ctx.font.monospace;
-        };
-        window = {
-          dynamic_title = true;
-          padding = { x = 4; y = 4; };
-        };
-      };
-    };
-
     eza = {
       enable = true;
       enableAliases = true;
@@ -631,6 +607,30 @@ rec {
         bind \cr _fzf_search_history
         bind -M insert \cr _fzf_search_history
       '';
+    };
+
+    foot = {
+      enable = true;
+
+      settings = {
+        main = {
+          # term = "xterm-256color";
+          font = "${ctx.font.monospace}:size=10";
+          box-drawings-uses-font-glyphs = true;
+          include = "${pkgs.foot.themes}/share/foot/themes/kitty";
+          pad = "4x4";
+        };
+
+        bell = {
+          urgent = "yes";
+          visual = true;
+          command = "dunstify -t 5000 -u low -a \${app-id} \${title} \${body}";
+        };
+
+        mouse = {
+          hide-when-typing = " yes ";
+        };
+      };
     };
 
     fzf = {
@@ -683,6 +683,7 @@ rec {
           };
           blocks =
             let
+              separator = "  ·  ";
               spacer = char: {
                 block = "custom";
                 command = "echo '${char}'";
@@ -726,7 +727,7 @@ rec {
               (device: with device; {
                 inherit mac;
                 block = "bluetooth";
-                format = "${name}{ $percentage|}";
+                format = "${name}{ $percentage|} {separator} ";
                 disconnected_format = "";
 
                 click = [{
@@ -734,7 +735,7 @@ rec {
                   cmd = "${blueman-manager}";
                 }];
               })
-            ++ [ (bluetooth-activated "⁞") ]
+            ++ [ (bluetooth-activated separator) ]
             ++ [
               {
                 block = "net";
@@ -746,7 +747,7 @@ rec {
                 command = "echo -n ⇄ $(ping -c1 8.8.8.8 | perl -nle '/time=(\\d+)/ && print $1')ms";
                 interval = 60;
               }
-              (spacer "⁞")
+              (spacer separator)
               {
                 block = "cpu";
                 interval = 1;
@@ -755,7 +756,7 @@ rec {
                 block = "memory";
                 format = "$icon $mem_used";
               }
-              (spacer "⁞")
+              (spacer separator)
               {
                 block = "sound";
                 device_kind = "source";
@@ -765,7 +766,7 @@ rec {
                 block = "sound";
                 show_volume_when_muted = true;
               }
-              (spacer "⁞")
+              (spacer separator)
               {
                 block = "hueshift";
                 # hue_shifter = "gammastep";
@@ -776,7 +777,7 @@ rec {
               {
                 block = "backlight";
               }
-              (spacer "⁞")
+              (spacer separator)
               {
                 block = "battery";
                 interval = 1;
@@ -799,7 +800,7 @@ rec {
                 warning = 50;
                 critical = 25;
               }
-              (spacer "⁞")
+              (spacer separator)
               {
                 block = "time";
                 interval = 1;

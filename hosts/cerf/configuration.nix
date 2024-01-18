@@ -13,7 +13,13 @@
   ];
 
   zramSwap.enable = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  nix.settings = {
+    cores = 6;
+    max-jobs = 4;
+    auto-optimise-store = true;
+    experimental-features = [ "nix-command" "flakes" ];
+  };
 
   hardware = {
     bluetooth = {
