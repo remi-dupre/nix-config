@@ -358,6 +358,9 @@ rec {
       desktop = "/tmp";
       documents = "${config.home.homeDirectory}/documents";
       download = "${config.home.homeDirectory}/downloads";
+      music = null;
+      pictures = null;
+      videos = null;
     };
   };
 
@@ -457,7 +460,7 @@ rec {
             "Control+Mod1+b" = "exec ${bluetoothctl} power on && ${blueman-manager}";
             # Close window
             "Mod1+F2" = "exec ${rofi} -theme ~/.config/rofi/drun.rasi -show";
-            "Mod1+c" = "exec ${rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description";
+            "Mod1+c" = "exec ${rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description --selector-args '-theme rofimoji'";
             "Mod1+F4" = "kill";
             # Screenshot
             "Print" = "exec ${action-screenshot "screen"} && ${action-sample "camera-shutter"}";
@@ -555,24 +558,23 @@ rec {
             "Mod1+Left" = "move workspace to output left";
             "Mod1+Right" = "move workspace to output right";
           };
-        modes =
-          {
-            resize = {
-              # These bindings trigger as soon as you enter the resize mode
-              "Left" = "resize shrink width 1 px or 1 ppt";
-              "Down" = "resize grow height 1 px or 1 ppt";
-              "Up" = "resize shrink height 1 px or 1 ppt";
-              "Right" = "resize grow width 1 px or 1 ppt";
-              # All the same but 10 times as effective with controll key pressed
-              "Control+Left" = "resize shrink width 10 px or 10 ppt";
-              "Control+Down" = "resize grow height 10 px or 10 ppt";
-              "Control+Up" = "resize shrink height 10 px or 10 ppt";
-              "Control+Right" = "resize grow width 10 px or 10 ppt";
-              # Back to normal: Enter or Escape
-              "Return" = "mode default";
-              "Escape" = "mode default";
-            };
+        modes = {
+          resize = {
+            # These bindings trigger as soon as you enter the resize mode
+            "Left" = "resize shrink width 1 px or 1 ppt";
+            "Down" = "resize grow height 1 px or 1 ppt";
+            "Up" = "resize shrink height 1 px or 1 ppt";
+            "Right" = "resize grow width 1 px or 1 ppt";
+            # All the same but 10 times as effective with controll key pressed
+            "Control+Left" = "resize shrink width 10 px or 10 ppt";
+            "Control+Down" = "resize grow height 10 px or 10 ppt";
+            "Control+Up" = "resize shrink height 10 px or 10 ppt";
+            "Control+Right" = "resize grow width 10 px or 10 ppt";
+            # Back to normal: Enter or Escape
+            "Return" = "mode default";
+            "Escape" = "mode default";
           };
+        };
       };
       extraConfig = ''
         bindswitch --reload --locked lid:on exec ${action-lock}
@@ -589,6 +591,8 @@ rec {
     eza = {
       enable = true;
       enableAliases = true;
+      git = true;
+      icons = true;
     };
 
     firefox = {
@@ -630,6 +634,15 @@ rec {
         mouse = {
           hide-when-typing = " yes ";
         };
+
+        scrollback = {
+          lines = 10000;
+          multiplier = 5.0;
+        };
+
+        url = {
+          label-letters = "qsdfghjklmwxcvbn";
+        };
       };
     };
 
@@ -657,6 +670,7 @@ rec {
       };
       extraConfig = {
         push.autoSetupRemote = true;
+        init.defaultBranch = "main";
       };
     };
 
@@ -674,7 +688,6 @@ rec {
             icons = {
               icons = "awesome4";
               overrides = {
-                net_wireless = "";
                 net_up = "";
                 net_down = "";
                 backlight = [ "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ];
@@ -727,7 +740,7 @@ rec {
               (device: with device; {
                 inherit mac;
                 block = "bluetooth";
-                format = "${name}{ $percentage|} {separator} ";
+                format = "${name}{ $percentage|} ${separator} ";
                 disconnected_format = "";
 
                 click = [{
@@ -735,11 +748,10 @@ rec {
                   cmd = "${blueman-manager}";
                 }];
               })
-            ++ [ (bluetooth-activated separator) ]
             ++ [
               {
                 block = "net";
-                format = "^icon_net_down$speed_down.eng(prefix:K) ^icon_net_up$speed_up.eng(prefix:K)";
+                format = "$icon  $ssid ^icon_net_down$speed_down.eng(prefix:K) ^icon_net_up$speed_up.eng(prefix:K)";
                 interval = 5;
               }
               {
@@ -768,16 +780,8 @@ rec {
               }
               (spacer separator)
               {
-                block = "hueshift";
-                # hue_shifter = "gammastep";
-                format = "☀ $temperature";
-                step = 50;
-                click_temp = 3500;
-              }
-              {
                 block = "backlight";
               }
-              (spacer separator)
               {
                 block = "battery";
                 interval = 1;
