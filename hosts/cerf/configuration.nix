@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, disko, home-manager, ... }:
+{ config, disko, home-manager, lib, pkgs, ... }:
 
 {
   imports = [
@@ -58,6 +58,9 @@
 
   # Docker
   virtualisation.docker.enable = true;
+
+  # Disabled services
+  systemd.services.docker.wantedBy = lib.mkForce [ ];
 
   # Bootloader.
   boot = {

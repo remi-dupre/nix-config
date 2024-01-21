@@ -259,6 +259,7 @@ rec {
       neovim
       pkg-config-rebuild
       ripgrep
+      syncthing
       unzip
       wl-clipboard
       yq
@@ -291,6 +292,7 @@ rec {
       gnome.file-roller
       gnome.nautilus
       libreoffice
+      loupe
       pavucontrol
       qgis
       signal-desktop
