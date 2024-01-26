@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, scripts, pkgs, lib, ... } @ inputs:
 
 let
   ctx = {
@@ -36,7 +36,6 @@ let
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
   dunstify = "${pkgs.dunst}/bin/dunstify";
   firefox = "${pkgs.firefox-devedition}/bin/firefox-devedition";
-  grimshot = "${pkgs.sway-contrib.grimshot}/bin/grimshot";
   nom = "${pkgs.nix-output-monitor}/bin/nom";
   pacmd = "${pkgs.pulseaudio}/bin/pacmd";
   pactl = "${pkgs.pulseaudio}/bin/pactl";
@@ -69,185 +68,6 @@ let
     nixos-rebuild switch --print-build-logs --log-format internal-json --flake $1 |& ${nom} --json
   '';
 
-  # Take a a screenshot
-  action-screenshot = mode: pkgs.writeShellScript "screenshot-${mode}" ''
-    OUTPUT_FILE=/tmp/screenshot_$(date +"%Y-%m-%dT%H:%M:%S").png
-
-    ${grimshot} copy ${mode}
-    ${wl-paste} > $OUTPUT_FILE
-    ${dunstify} --icon $OUTPUT_FILE "Saved ${mode} to clipboard" "$OUTPUT_FILE"
-  '';
-
-  # Notify of current brightness
-  action-notify-brightness = pkgs.writeShellScript "notify-brightness" ''
-    ID_FILE=/tmp/.notif_brightness_id
-
-    brightness=$((100 * `${brightnessctl} get` / `${brightnessctl} max`))
-    notif_id=$(cat $ID_FILE || echo -n "601")
-
-    notif_id=$(
-      ${dunstify} \
-        --printid \
-        --hints "int:value:$brightness" \
-        --replace=$notif_id \
-        --icon=display-brightness-symbolic \
-        --urgency=low \
-        --timeout=1000 "Brightness" "$brightness %"
-    )
-
-    echo $notif_id > $ID_FILE
-  '';
-
-  # Notify of current sound level
-  action-notify-sound = pkgs.writeShellScript "notify-sound" ''
-    ID_FILE=/tmp/.notif_sound_id
-
-    notif_id=$(cat $ID_FILE || echo "600")
-    default_sink_name=$(${pactl} get-default-sink)
-
-    name=$(
-      ${pactl} list sinks \
-        | sed "0,/$default_sink_name/d" \
-        | grep Description \
-        | sed -e 's/^.*Description: \(.*\)$/\1/g' \
-        | head -n 1
-    )
-
-    volume=$(
-      ${pactl} get-sink-volume $default_sink_name \
-        | head -n 1 \
-        | sed -e 's/^.* \([0-9]\+\)%.*$/\1/g'
-    )
-
-    muted=$(
-      ${pactl} get-sink-mute $default_sink_name \
-        | sed -e 's/^Mute: \(.*\)$/\1/'
-    )
-
-    # Notification attributes
-    if [ $volume -gt "101" ]; then
-      force="overamplified"
-    elif [ $volume -gt "70" ]; then
-      force="high"
-    elif [ $volume -gt "35" ]; then
-      force="medium"
-    elif [ $volume -gt "1" ]; then
-      force="low"
-    else
-      force="muted"
-    fi
-
-    if [ $volume -gt "100" ]; then
-      urgency="critical"
-    else
-      urgency="low"
-    fi
-
-    # Display
-    if [ $muted = "yes" ]; then
-      notif_id=$(
-        ${dunstify} \
-          --printid \
-          --replace=$notif_id \
-          --icon=audio-volume-muted-symbolic \
-          --urgency=low \
-          --timeout=1000 \
-          "$name" "Off"
-      )
-    else
-      notif_id=$(
-        ${dunstify} \
-          --printid \
-          --hints "int:value:$volume" \
-          --replace=$notif_id \
-          --icon=audio-volume-$force-symbolic \
-          --urgency=$urgency \
-          --timeout=1000 \
-          "$name" "$volume%"
-      )
-    fi
-
-    echo $notif_id > $ID_FILE
-  '';
-
-  # Notify of current microphone level
-  action-notify-micro = pkgs.writeShellScript "notify-micro" ''
-    ID_FILE=/tmp/.notif_microphone_id
-
-    notif_id=$(cat $ID_FILE || echo "602")
-    default_source_name=$(${pactl} get-default-source)
-
-    name=$(
-      ${pactl} list sources \
-        | sed "0,/$default_source_name/d" \
-        | grep Description \
-        | sed -e 's/^.*Description: \(.*\)$/\1/g' \
-        | head -n 1
-    )
-
-    volume=$(
-      ${pactl} get-source-volume $default_source_name \
-        | head -n 1 | sed -e 's/^.* \([0-9]\+\)%.*$/\1/g'
-    )
-
-    muted=$(
-      ${pactl} get-source-mute $default_source_name \
-        | sed -e 's/^Mute: \(.*\)$/\1/'
-    )
-
-    # Notification attributes
-    if [ $volume -gt "66" ]; then
-      force="high"
-    elif [ $volume -gt "33" ]; then
-      force="medium"
-    else
-      force="low"
-    fi
-
-    if [ $volume -gt "100" ]; then
-        urgency="critical"
-    else
-        urgency="low"
-    fi
-
-    # Display
-    if [ $muted = "yes" ]; then
-      notif_id=$(
-        ${dunstify} \
-          --printid \
-          --replace=$notif_id \
-          --icon=microphone-sensitivity-muted-symbolic \
-          --urgency=low \
-          --timeout=1000 \
-          "$name" "Off"
-      )
-    else
-      notif_id=$(
-        ${dunstify} \
-          --printid \
-          --hints "int:value:$volume" \
-          --replace=$notif_id \
-          --icon=microphone-sensitivity-$force-symbolic \
-          --urgency=$urgency \
-          --timeout=1000 \
-          "$name" "$volume%"
-      )
-    fi
-
-    echo $notif_id > $ID_FILE
-  '';
-
-  # Load lock wallpaper from bing image
-  action-update-wallpaper = pkgs.writers.writePython3
-    "update-wallpaper"
-    {
-      libraries = with pkgs.python3Packages; [
-        pillow
-        pyyaml
-      ];
-    }
-    (builtins.readFile ./static/scripts/update-wallpaper.py);
-
   # Forget sudo password, ssh keys and finaly locks
   action-lock = "sudo -K && ssh-add -D && gpgconf --reload gpg-agent && swaylock";
 
@@ -259,10 +79,13 @@ let
   # Microphone control
   action-micro-mute = op: "${pactl} set-source-mute @DEFAULT_SOURCE@ ${op}"; # op is toggle / off
   action-micro-volume = op: "${pactl} set-source-volume @DEFAULT_SOURCE@ ${op}"; # op is +5% / -5%
+
+  # Smaller scripts
+  scripts = (import ./scripts inputs);
 in
 rec {
   imports = [
-    ../modules/htop.nix
+    ./modules/common
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -419,7 +242,7 @@ rec {
           { command = "swaymsg split v"; }
           {
             command = ''
-              ${action-update-wallpaper} ${toString ctx.screen.width} ${toString ctx.screen.height} ${fonts-dir}/NotoSansNerdFont-Regular.ttf ${path-lock-wallpaper}
+              ${scripts.update-wallpaper} ${toString ctx.screen.width} ${toString ctx.screen.height} ${fonts-dir}/NotoSansNerdFont-Regular.ttf ${path-lock-wallpaper}
             '';
           }
         ];
@@ -484,25 +307,25 @@ rec {
             "Mod1+c" = "exec ${rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description --selector-args '-theme rofimoji'";
             "Mod1+F4" = "kill";
             # Screenshot
-            "Print" = "exec ${action-screenshot "screen"} && ${action-sample "camera-shutter"}";
-            "Shift+Print" = "exec ${action-screenshot "area"} && ${action-sample "camera-shutter"}";
-            "Control+Print" = "exec ${action-screenshot "window"} && ${action-sample "camera-shutter"}";
+            "Print" = ''exec ${scripts.screenshot} "screen" && ${action-sample "camera-shutter"}'';
+            "Shift+Print" = ''exec ${scripts.screenshot} "area" && ${action-sample "camera-shutter"}'';
+            "Control+Print" = ''exec ${scripts.screenshot} "window" && ${action-sample "camera-shutter"}'';
             # Sound
-            "XF86AudioRaiseVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "+5%"} & ${action-notify-sound} & ${action-sample "audio-volume-change"}'";
-            "XF86AudioLowerVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "-5%"} & ${action-notify-sound} & ${action-sample "audio-volume-change"}'";
-            "XF86AudioMute" = "exec '${action-sound-mute "toggle"} & ${action-notify-sound} & ${action-sample "audio-volume-change"}'";
+            "XF86AudioRaiseVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "+5%"} & ${scripts.notify.sound} & ${action-sample "audio-volume-change"}'";
+            "XF86AudioLowerVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "-5%"} & ${scripts.notify.sound} & ${action-sample "audio-volume-change"}'";
+            "XF86AudioMute" = "exec '${action-sound-mute "toggle"} & ${scripts.notify.sound} & ${action-sample "audio-volume-change"}'";
             # Microphone
-            "Shift+XF86AudioRaiseVolume" = "exec '${action-micro-mute "off"} & ${action-micro-volume "+5%"} & ${action-notify-micro}'";
-            "Shift+XF86AudioLowerVolume" = "exec '${action-micro-mute "off"} & ${action-micro-volume "-5%"} & ${action-notify-micro}'";
-            "Shift+XF86AudioMute" = "exec '${action-micro-mute "toggle"}; ${action-notify-micro}'";
+            "Shift+XF86AudioRaiseVolume" = "exec '${action-micro-mute "off"} & ${action-micro-volume "+5%"} & ${scripts.notify.micro}'";
+            "Shift+XF86AudioLowerVolume" = "exec '${action-micro-mute "off"} & ${action-micro-volume "-5%"} & ${scripts.notify.micro}'";
+            "Shift+XF86AudioMute" = "exec '${action-micro-mute "toggle"}; ${scripts.notify.micro}'";
             #  MPD Control
             "xf86audioplay" = "exec ${playerctl} play-pause";
             "xf86audionext" = "exec ${playerctl} next";
             "xf86audioprev" = "exec ${playerctl} prev";
             "xf86audiostop" = "exec ${playerctl} stop";
             # Brightness
-            "XF86MonBrightnessUp" = "exec '${brightnessctl} set 5%+ && ${action-notify-brightness}'";
-            "XF86MonBrightnessDown" = "exec '${brightnessctl} set 5%- && ${action-notify-brightness}'";
+            "XF86MonBrightnessUp" = "exec '${brightnessctl} set 5%+ && ${scripts.notify.brightness}'";
+            "XF86MonBrightnessDown" = "exec '${brightnessctl} set 5%- && ${scripts.notify.brightness}'";
             # Rebuild config and reload
             "${modifier}+Shift+r" = "swaymsg reload";
             # Always on top window

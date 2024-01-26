@@ -203,7 +203,7 @@
 
   # Include homemanager config
   home-manager.users.remi = {
-    imports = [ ../../home-manager ];
+    imports = [ ../../home ];
   };
 
   # Allow unfree packages
