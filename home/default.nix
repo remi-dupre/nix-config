@@ -1,4 +1,4 @@
-{ config, scripts, pkgs, lib, ... } @ inputs:
+{ config, pkgs, lib, ... } @ inputs:
 
 let
   ctx = {
@@ -23,69 +23,22 @@ let
     };
   };
 
-  # Locations
-  path-lock-wallpaper = "~/.lock-wallpaper.png";
+  # Commons
+  action = (import ./modules/actions.nix inputs);
+  bin = (import ./modules/binaries.nix inputs);
+  scripts = (import ./modules/scripts inputs);
 
   # Fonts
   fonts-pkg = pkgs.nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; };
   fonts-dir = "${fonts-pkg}/share/fonts/truetype/NerdFonts";
 
-  # Binaries
-  blueman-manager = "${pkgs.blueman}/bin/blueman-manager";
-  bluetoothctl = "${pkgs.bluez}/bin/bluetoothctl";
-  brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
-  dunstify = "${pkgs.dunst}/bin/dunstify";
-  firefox = "${pkgs.firefox-devedition}/bin/firefox-devedition";
-  nom = "${pkgs.nix-output-monitor}/bin/nom";
-  pacmd = "${pkgs.pulseaudio}/bin/pacmd";
-  pactl = "${pkgs.pulseaudio}/bin/pactl";
-  playerctl = "${pkgs.playerctl}/bin/playerctl";
-  rofi = "${pkgs.rofi-wayland}/bin/rofi";
-  rofimoji = "${pkgs.rofimoji}/bin/rofimoji";
-  wl-paste = "${pkgs.wl-clipboard}/bin/wl-paste";
-
-  # Python
-  python-packages = (ps: with ps; [
-    httpie
-    python-lsp-server
-    (buildPythonPackage
-      rec {
-        pname = "httpie-credential-store";
-        version = "3.0.0";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "sha256-MfURNdYPatsnKnC6O9dFFCcVFC1SUZ4l33E208rSNis=";
-        };
-        doCheck = false;
-        propagatedBuildInputs = [
-          keyring
-        ];
-      })
-  ]);
-
-  # Update nixos config
-  pkg-config-rebuild = pkgs.writeScriptBin "config-rebuild" ''
-    nixos-rebuild switch --print-build-logs --log-format internal-json --flake $1 |& ${nom} --json
-  '';
-
-  # Forget sudo password, ssh keys and finaly locks
-  action-lock = "sudo -K && ssh-add -D && gpgconf --reload gpg-agent && swaylock";
-
-  # Sound control
-  action-sound-mute = op: "${pactl} set-sink-mute @DEFAULT_SINK@ ${op}"; # op is toggle / off
-  action-sound-volume = op: "${pactl} set-sink-volume @DEFAULT_SINK@ ${op}"; # op is +5% / -5%
-  action-sample = op: "pw-play ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/${op}.oga";
-
-  # Microphone control
-  action-micro-mute = op: "${pactl} set-source-mute @DEFAULT_SOURCE@ ${op}"; # op is toggle / off
-  action-micro-volume = op: "${pactl} set-source-volume @DEFAULT_SOURCE@ ${op}"; # op is +5% / -5%
-
-  # Smaller scripts
-  scripts = (import ./scripts inputs);
+  # Paths
+  lock-wallpaper = "~/.lock-wallpaper.png";
 in
 rec {
   imports = [
     ./modules/common
+    ./modules/sway
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -97,33 +50,6 @@ rec {
     keyboard.layout = "fr";
 
     packages = with pkgs; [
-      # Terminal Utilities
-      jq
-      neovim
-      pkg-config-rebuild
-      ripgrep
-      syncthing
-      unzip
-      wl-clipboard
-      yq
-      zip
-      # Programming
-      cargo
-      gcc
-      gitleaks
-      helm-docs
-      openssl
-      pkg-config
-      (pkgs.wrapHelm pkgs.kubernetes-helm { plugins = [ pkgs.kubernetes-helmPlugins.helm-secrets ]; })
-      poetry
-      pre-commit
-      (python311.withPackages python-packages)
-      ruff
-      ruff-lsp
-      sops
-      yaml-language-server
-      # Vim Plugins
-      rnix-lsp
       # Desktop requirements
       adw-gtk3 # libadwaita theme for GTK3
       xdg-utils # for opening default programs when clicking links
@@ -221,209 +147,6 @@ rec {
       font-name = "${ctx.font.default} 10";
     };
   };
-
-
-  wayland.windowManager.sway =
-    let
-      modifier = "Mod4";
-    in
-    {
-      enable = true;
-
-      wrapperFeatures = {
-        base = true;
-        gtk = true;
-      };
-
-      config = {
-        inherit modifier;
-        terminal = "foot";
-        startup = [
-          { command = "swaymsg split v"; }
-          {
-            command = ''
-              ${scripts.update-wallpaper} ${toString ctx.screen.width} ${toString ctx.screen.height} ${fonts-dir}/NotoSansNerdFont-Regular.ttf ${path-lock-wallpaper}
-            '';
-          }
-        ];
-        fonts = {
-          names = [ ctx.font.default ];
-          size = 10.0;
-        };
-        input = {
-          "*".xkb_layout = "fr";
-          "type:touchpad".tap = "enabled";
-        };
-        output = {
-          "*" = {
-            scale = toString ctx.screen.scale;
-            bg = "${./static/wallpaper.jpg} fill";
-          };
-        };
-        floating = {
-          criteria = [
-            { app_id = "blueman-manager"; }
-            { app_id = "pavucontrol"; }
-            { app_id = "wdisplays"; }
-            { instance = "protonmail-bridge"; }
-            { title = "Extension:*"; }
-            { title = "Firefox Developer Edition — Sharing Indicator"; }
-            { title = "Firefox — Sharing Indicator"; }
-          ];
-        };
-        window = {
-          hideEdgeBorders = "both";
-          border = 1;
-          titlebar = false;
-        };
-        bars = [{
-          statusCommand = "SHELL=${pkgs.bash}/bin/bash i3status-rs ~/.config/i3status-rust/config-default.toml";
-          position = "top";
-          trayOutput = "none";
-
-          fonts = {
-            names = [ ctx.font.compact ];
-            size = 10.0;
-          };
-
-          colors = {
-            statusline = ctx.color.back;
-            background = ctx.color.back;
-            focusedWorkspace = with ctx.color; { background = prim; border = back; text = fbri; };
-            inactiveWorkspace = with ctx.color; { background = back; border = back; text = font; };
-          };
-        }];
-        keybindings =
-          lib.mkOptionDefault {
-            # Application shortcuts
-            "${modifier}+l" = "exec ${action-lock}";
-            "Control+Mod1+d" = "exec nautilus";
-            "Control+Mod1+f" = "exec ${firefox}";
-            "Control+Shift+p" = "exec ${firefox} --private-window";
-            "Control+Mod1+s" = "exec pavucontrol";
-            "Control+Mod1+b" = "exec ${bluetoothctl} power on && ${blueman-manager}";
-            # Close window
-            "Mod1+F2" = "exec ${rofi} -theme ~/.config/rofi/drun.rasi -show";
-            "Mod1+c" = "exec ${rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description --selector-args '-theme rofimoji'";
-            "Mod1+F4" = "kill";
-            # Screenshot
-            "Print" = ''exec ${scripts.screenshot} "screen" && ${action-sample "camera-shutter"}'';
-            "Shift+Print" = ''exec ${scripts.screenshot} "area" && ${action-sample "camera-shutter"}'';
-            "Control+Print" = ''exec ${scripts.screenshot} "window" && ${action-sample "camera-shutter"}'';
-            # Sound
-            "XF86AudioRaiseVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "+5%"} & ${scripts.notify.sound} & ${action-sample "audio-volume-change"}'";
-            "XF86AudioLowerVolume" = "exec '${action-sound-mute "off"} & ${action-sound-volume "-5%"} & ${scripts.notify.sound} & ${action-sample "audio-volume-change"}'";
-            "XF86AudioMute" = "exec '${action-sound-mute "toggle"} & ${scripts.notify.sound} & ${action-sample "audio-volume-change"}'";
-            # Microphone
-            "Shift+XF86AudioRaiseVolume" = "exec '${action-micro-mute "off"} & ${action-micro-volume "+5%"} & ${scripts.notify.micro}'";
-            "Shift+XF86AudioLowerVolume" = "exec '${action-micro-mute "off"} & ${action-micro-volume "-5%"} & ${scripts.notify.micro}'";
-            "Shift+XF86AudioMute" = "exec '${action-micro-mute "toggle"}; ${scripts.notify.micro}'";
-            #  MPD Control
-            "xf86audioplay" = "exec ${playerctl} play-pause";
-            "xf86audionext" = "exec ${playerctl} next";
-            "xf86audioprev" = "exec ${playerctl} prev";
-            "xf86audiostop" = "exec ${playerctl} stop";
-            # Brightness
-            "XF86MonBrightnessUp" = "exec '${brightnessctl} set 5%+ && ${scripts.notify.brightness}'";
-            "XF86MonBrightnessDown" = "exec '${brightnessctl} set 5%- && ${scripts.notify.brightness}'";
-            # Rebuild config and reload
-            "${modifier}+Shift+r" = "swaymsg reload";
-            # Always on top window
-            "${modifier}+w" = "sticky toggle";
-            # Stick and resize
-            "${modifier}+Shift+w" =
-              let
-                ratio = 0.20;
-                margin = 25;
-                width = builtins.floor (ratio * ctx.screen.width);
-                height = builtins.floor (width * 9 / 16);
-                pos-x = builtins.floor (ctx.screen.width / ctx.screen.scale - width - margin);
-              in
-              "floating enable; sticky enable; resize set ${toString width} ${toString height}; move position ${toString pos-x} ${toString margin}";
-            # Shutdown button
-            "XF86PowerOff" = "exec shutdown -h now";
-            # Change focus
-            "${modifier}+Left" = "focus left";
-            "${modifier}+Down" = "focus down";
-            "${modifier}+Up" = "focus up";
-            "${modifier}+Right" = "focus right";
-            "${modifier}+Tab" = "focus next";
-            "${modifier}+Shift+Tab" = "focus prev";
-            # Move focused window
-            "${modifier}+Shift+Left" = "move left";
-            "${modifier}+Shift+Down" = "move down";
-            "${modifier}+Shift+Up" = "move up";
-            "${modifier}+Shift+Right" = "move right";
-            # Split in horizontal orientation
-            "${modifier}+h" = "split h";
-            # Split in vertical orientation
-            "${modifier}+v" = "split v";
-            # Enter fullscreen mode for the focused container
-            "${modifier}+f" = "fullscreen toggle";
-            # Change container layout (stacked, tabbed, toggle split)
-            "${modifier}+s" = "layout stacking";
-            "${modifier}+z" = "layout tabbed";
-            "${modifier}+e" = "layout toggle split";
-            # Toggle tiling / floating
-            "${modifier}+Shift+space" = "floating toggle";
-            # Change focus between tiling / floating windows
-            "${modifier}+space" = "focus mode_toggle";
-            # Focus the parent container
-            "${modifier}+q" = "focus parent";
-            # Focus the child container
-            "${modifier}+d" = "focus child";
-            # Switch to workspace
-            "${modifier}+ampersand" = "workspace number 1";
-            "${modifier}+eacute" = "workspace number 2";
-            "${modifier}+quotedbl" = "workspace number 3";
-            "${modifier}+apostrophe" = "workspace number 4";
-            "${modifier}+parenleft" = "workspace number 5";
-            "${modifier}+minus" = "workspace number 6";
-            "${modifier}+egrave" = "workspace number 7";
-            "${modifier}+underscore" = "workspace number 8";
-            "${modifier}+ccedilla" = "workspace number 9";
-            "${modifier}+agrave" = "workspace number 10";
-            "${modifier}+t" = "workspace ";
-            # Move focused container to workspace
-            "${modifier}+Shift+ampersand" = "move container to workspace number 1";
-            "${modifier}+Shift+eacute" = "move container to workspace number 2";
-            "${modifier}+Shift+quotedbl" = "move container to workspace number 3";
-            "${modifier}+Shift+apostrophe" = "move container to workspace number 4";
-            "${modifier}+Shift+parenleft" = "move container to workspace number 5";
-            "${modifier}+Shift+minus" = "move container to workspace number 6";
-            "${modifier}+Shift+egrave" = "move container to workspace number 7";
-            "${modifier}+Shift+underscore" = "move container to workspace number 8";
-            "${modifier}+Shift+ccedilla" = "move container to workspace number 9";
-            "${modifier}+Shift+agrave" = "move container to workspace number 10";
-            "${modifier}+Shift+t" = "move container to workspace ";
-            # Switch to resize mode
-            "${modifier}+r" = "mode resize";
-            # Change monitor for a workspace
-            "Mod1+Left" = "move workspace to output left";
-            "Mod1+Right" = "move workspace to output right";
-          };
-        modes = {
-          resize = {
-            # These bindings trigger as soon as you enter the resize mode
-            "Left" = "resize shrink width 1 px or 1 ppt";
-            "Down" = "resize grow height 1 px or 1 ppt";
-            "Up" = "resize shrink height 1 px or 1 ppt";
-            "Right" = "resize grow width 1 px or 1 ppt";
-            # All the same but 10 times as effective with controll key pressed
-            "Control+Left" = "resize shrink width 10 px or 10 ppt";
-            "Control+Down" = "resize grow height 10 px or 10 ppt";
-            "Control+Up" = "resize shrink height 10 px or 10 ppt";
-            "Control+Right" = "resize grow width 10 px or 10 ppt";
-            # Back to normal: Enter or Escape
-            "Return" = "mode default";
-            "Escape" = "mode default";
-          };
-        };
-      };
-      extraConfig = ''
-        bindswitch --reload --locked lid:on exec ${action-lock}
-      '';
-    };
 
   programs = {
     bat.enable = true;
@@ -552,18 +275,18 @@ rec {
                   (_: spacer char);
               bluetooth-activated = text: {
                 block = "custom";
-                command = "${bluetoothctl} show | grep -o 'Powered: yes' > /dev/null && echo -n '${text}'";
+                command = "${bin.bluetoothctl} show | grep -o 'Powered: yes' > /dev/null && echo -n '${text}'";
                 format = "$text.pango-str()";
                 interval = 1;
 
                 click = [
                   {
                     button = "left";
-                    cmd = "${blueman-manager}";
+                    cmd = "${bin.blueman-manager}";
                   }
                   {
                     button = "right";
-                    cmd = "${bluetoothctl} power off";
+                    cmd = "${bin.bluetoothctl} power off";
                     update = true;
                   }
                 ];
@@ -589,7 +312,7 @@ rec {
 
                 click = [{
                   button = "left";
-                  cmd = "${blueman-manager}";
+                  cmd = "${bin.blueman-manager}";
                 }];
               })
             ++ [
@@ -718,7 +441,7 @@ rec {
     swaylock = {
       enable = true;
       settings = {
-        image = "${path-lock-wallpaper}";
+        image = "${lock-wallpaper}";
         ignore-empty-password = true;
       };
     };
@@ -949,7 +672,7 @@ rec {
           dmenu = "dmenu -p dunst";
 
           # Browser for opening urls in context menu.
-          browser = "${firefox} -new-tab";
+          browser = "${bin.firefox} -new-tab";
 
           # Always run rule-defined scripts, even if the notification is suppressed
           always_run_script = true;
@@ -1058,7 +781,7 @@ rec {
       events = [
         {
           event = "before-sleep";
-          command = action-lock;
+          command = action.lock;
         }
         {
           event = "after-resume";
@@ -1069,7 +792,7 @@ rec {
       timeouts = [
         {
           timeout = 1795;
-          command = action-lock;
+          command = action.lock;
         }
         {
           timeout = 1800;
