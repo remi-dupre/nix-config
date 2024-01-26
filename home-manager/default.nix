@@ -45,6 +45,25 @@ let
   rofimoji = "${pkgs.rofimoji}/bin/rofimoji";
   wl-paste = "${pkgs.wl-clipboard}/bin/wl-paste";
 
+  # Python
+  python-packages = (ps: with ps; [
+    httpie
+    python-lsp-server
+    (buildPythonPackage
+      rec {
+        pname = "httpie-credential-store";
+        version = "3.0.0";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "sha256-MfURNdYPatsnKnC6O9dFFCcVFC1SUZ4l33E208rSNis=";
+        };
+        doCheck = false;
+        propagatedBuildInputs = [
+          keyring
+        ];
+      })
+  ]);
+
   # Update nixos config
   pkg-config-rebuild = pkgs.writeScriptBin "config-rebuild" ''
     nixos-rebuild switch --print-build-logs --log-format internal-json --flake $1 |& ${nom} --json
@@ -60,7 +79,7 @@ let
   '';
 
   # Notify of current brightness
-  notify-brightness = pkgs.writeShellScript "notify-brightness" ''
+  action-notify-brightness = pkgs.writeShellScript "notify-brightness" ''
     ID_FILE=/tmp/.notif_brightness_id
 
     brightness=$((100 * `${brightnessctl} get` / `${brightnessctl} max`))
@@ -231,10 +250,12 @@ let
 
   # Forget sudo password, ssh keys and finaly locks
   action-lock = "sudo -K && ssh-add -D && gpgconf --reload gpg-agent && swaylock";
+
   # Sound control
   action-sound-mute = op: "${pactl} set-sink-mute @DEFAULT_SINK@ ${op}"; # op is toggle / off
   action-sound-volume = op: "${pactl} set-sink-volume @DEFAULT_SINK@ ${op}"; # op is +5% / -5%
   action-sample = op: "pw-play ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/${op}.oga";
+
   # Microphone control
   action-micro-mute = op: "${pactl} set-source-mute @DEFAULT_SOURCE@ ${op}"; # op is toggle / off
   action-micro-volume = op: "${pactl} set-source-volume @DEFAULT_SOURCE@ ${op}"; # op is +5% / -5%
@@ -254,7 +275,6 @@ rec {
 
     packages = with pkgs; [
       # Terminal Utilities
-      httpie
       jq
       neovim
       pkg-config-rebuild
@@ -274,8 +294,7 @@ rec {
       (pkgs.wrapHelm pkgs.kubernetes-helm { plugins = [ pkgs.kubernetes-helmPlugins.helm-secrets ]; })
       poetry
       pre-commit
-      python3
-      python311Packages.python-lsp-server
+      (python311.withPackages python-packages)
       ruff
       ruff-lsp
       sops
@@ -482,8 +501,8 @@ rec {
             "xf86audioprev" = "exec ${playerctl} prev";
             "xf86audiostop" = "exec ${playerctl} stop";
             # Brightness
-            "XF86MonBrightnessUp" = "exec '${brightnessctl} set 5%+ && ${notify-brightness}'";
-            "XF86MonBrightnessDown" = "exec '${brightnessctl} set 5%- && ${notify-brightness}'";
+            "XF86MonBrightnessUp" = "exec '${brightnessctl} set 5%+ && ${action-notify-brightness}'";
+            "XF86MonBrightnessDown" = "exec '${brightnessctl} set 5%- && ${action-notify-brightness}'";
             # Rebuild config and reload
             "${modifier}+Shift+r" = "swaymsg reload";
             # Always on top window
