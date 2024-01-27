@@ -9,13 +9,6 @@ let
       height = 1600;
       scale = 1.20;
     };
-    color = {
-      back = "#000000"; # background color
-      prim = "#2e2f5d"; # primary color for accents
-      font = "#BABABA"; # font color
-      fdim = "#222222"; # dimmed font color
-      fbri = "#FFFFFF"; # bright font color
-    };
     font = {
       default = "NotoSans Nerd Font";
       compact = "NotoSans Nerd Font SemiCondensed";
@@ -24,9 +17,10 @@ let
   };
 
   # Commons
-  action = (import ./modules/actions.nix inputs);
-  bin = (import ./modules/binaries.nix inputs);
-  scripts = (import ./modules/scripts inputs);
+  action = (import ./common/actions.nix inputs);
+  bin = (import ./common/binaries.nix inputs);
+  color = (import ./common/colors.nix inputs);
+  scripts = (import ./common/scripts inputs);
 
   # Fonts
   fonts-pkg = pkgs.nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; };
@@ -37,7 +31,7 @@ let
 in
 rec {
   imports = [
-    ./modules/common
+    ./modules/shell
     ./modules/sway
   ];
 
@@ -238,147 +232,6 @@ rec {
       extraConfig = {
         push.autoSetupRemote = true;
         init.defaultBranch = "main";
-      };
-    };
-
-
-    i3status-rust = {
-      enable = true;
-
-      bars = {
-        default = {
-          settings = {
-            theme = {
-              theme = "plain";
-              overrides.separator = " ";
-            };
-            icons = {
-              icons = "awesome4";
-              overrides = {
-                net_up = "";
-                net_down = "";
-                backlight = [ "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ];
-              };
-            };
-          };
-          blocks =
-            let
-              separator = "  ·  ";
-              spacer = char: {
-                block = "custom";
-                command = "echo '${char}'";
-                interval = 3600;
-              };
-              spacers =
-                size: char: lib.lists.forEach
-                  (lib.lists.range 1 size)
-                  (_: spacer char);
-              bluetooth-activated = text: {
-                block = "custom";
-                command = "${bin.bluetoothctl} show | grep -o 'Powered: yes' > /dev/null && echo -n '${text}'";
-                format = "$text.pango-str()";
-                interval = 1;
-
-                click = [
-                  {
-                    button = "left";
-                    cmd = "${bin.blueman-manager}";
-                  }
-                  {
-                    button = "right";
-                    cmd = "${bin.bluetoothctl} power off";
-                    update = true;
-                  }
-                ];
-              };
-            in
-            [{
-              block = "focused_window";
-              format = "<b>$title.str(max_w:120)</b>|";
-            }]
-            ++ spacers 30 ""
-            ++ [ (bluetooth-activated "") ]
-            ++ lib.lists.forEach
-              [
-                { mac = "00:00:AB:CD:55:75"; name = "FP Earbuds"; }
-                { mac = "04:21:44:49:4C:C6"; name = "HyperX"; }
-                { mac = "5C:EB:68:70:9E:9E"; name = "Platan"; }
-              ]
-              (device: with device; {
-                inherit mac;
-                block = "bluetooth";
-                format = "${name}{ $percentage|} ${separator} ";
-                disconnected_format = "";
-
-                click = [{
-                  button = "left";
-                  cmd = "${bin.blueman-manager}";
-                }];
-              })
-            ++ [
-              {
-                block = "net";
-                format = "$icon  $ssid ^icon_net_down$speed_down.eng(prefix:K) ^icon_net_up$speed_up.eng(prefix:K)";
-                interval = 5;
-              }
-              {
-                block = "custom";
-                command = "echo -n ⇄ $(ping -c1 8.8.8.8 | perl -nle '/time=(\\d+)/ && print $1')ms";
-                interval = 60;
-              }
-              (spacer separator)
-              {
-                block = "cpu";
-                interval = 1;
-              }
-              {
-                block = "memory";
-                format = "$icon $mem_used";
-              }
-              (spacer separator)
-              {
-                block = "sound";
-                device_kind = "source";
-                show_volume_when_muted = true;
-              }
-              {
-                block = "sound";
-                show_volume_when_muted = true;
-              }
-              (spacer separator)
-              {
-                block = "backlight";
-              }
-              {
-                block = "battery";
-                interval = 1;
-                format = "$icon   $percentage";
-                full_format = "";
-                empty_format = "";
-                full_threshold = 100;
-                good = 100;
-                info = 75;
-                warning = 50;
-                critical = 25;
-              }
-              {
-                block = "battery";
-                interval = 10;
-                format = "($time)";
-                full_threshold = 100;
-                good = 100;
-                info = 75;
-                warning = 50;
-                critical = 25;
-              }
-              (spacer separator)
-              {
-                block = "time";
-                interval = 1;
-                format = "<b>$timestamp.datetime(f:'%A %d %B %Y - %H:%M', l:fr_FR)</b>";
-              }
-            ];
-        };
       };
     };
 
@@ -747,7 +600,7 @@ rec {
         urgency_normal = {
           background = "000000";
           foreground = "#ffffff";
-          frame_color = "${ctx.color.prim}";
+          frame_color = "${color.prim}";
           timeout = 10;
           # icon = /path/to/icon;
         };

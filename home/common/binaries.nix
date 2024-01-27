@@ -1,11 +1,13 @@
 { pkgs, ... } @ inputs:
 
 with pkgs; {
+  bash = "${bash}/bin/bash";
   blueman-manager = "${blueman}/bin/blueman-manager";
   bluetoothctl = "${bluez}/bin/bluetoothctl";
   brightnessctl = "${brightnessctl}/bin/brightnessctl";
   dunstify = "${dunst}/bin/dunstify";
   firefox = "${firefox-devedition}/bin/firefox-devedition";
+  foot = "${foot}/bin/foot";
   pacmd = "${pulseaudio}/bin/pacmd";
   pactl = "${pulseaudio}/bin/pactl";
   playerctl = "${playerctl}/bin/playerctl";
