@@ -5,7 +5,7 @@
     enable = true;
 
     settings = with config.lib.htop; {
-      color_scheme = 6;
+      color_scheme = 0;
       hide_kernel_threads = 1;
       hide_userland_threads = 1;
       highlight_threads = 1;
@@ -48,8 +48,4 @@
       ]
     );
   };
-
-  home.packages = with pkgs; [
-    jq
-  ];
 }

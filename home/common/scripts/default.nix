@@ -43,7 +43,7 @@ rec {
   bin = {
     config-rebuild = "${pkg.config-rebuild}/bin/config-rebuild";
     notify.sound = "${pkg.notify.sound}/bin/notify-sound";
-    notify.micro = "${pkg.notify.sound}/bin/notify-micro";
+    notify.micro = "${pkg.notify.micro}/bin/notify-micro";
     notify.brightness = "${pkg.notify.brightness}/bin/notify-brightness";
     screenshot = "${pkg.screenshot}/bin/screenshot";
     update-wallpaper = "${pkg.update-wallpaper}/bin/update-wallpaper";

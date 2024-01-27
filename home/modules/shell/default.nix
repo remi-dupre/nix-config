@@ -56,12 +56,6 @@ in
     bat.enable = true; # A cat(1) clone with syntax highlighting and Git integration
     direnv.enable = true; # A shell extension that manages your environment
     nix-index.enable = true; # A files database for nixpkgs
-
-    # A web browser built from Firefox source tree
-    firefox = {
-      enable = true;
-      package = pkgs.firefox-devedition;
-    };
   };
 
   home.packages = with pkgs; [

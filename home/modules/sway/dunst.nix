@@ -11,9 +11,9 @@ in
     enable = true;
 
     iconTheme = {
-      name = "Adwaita";
-      package = pkgs.gnome.adwaita-icon-theme;
-      size = "symbolic";
+      name = "Numix";
+      package = pkgs.numix-icon-theme;
+      size = "scalable";
     };
 
     settings = {

@@ -123,5 +123,11 @@ in
         font-name = "${font.default} ${toString font.size}";
       };
     };
+
+    # A web browser built from Firefox source tree
+    programs.firefox = {
+      enable = true;
+      package = pkgs.firefox-devedition;
+    };
   };
 }

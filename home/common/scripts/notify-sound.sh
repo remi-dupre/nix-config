@@ -32,7 +32,7 @@ elif [ "$volume" -gt "35" ]; then
 elif [ "$volume" -gt "1" ]; then
   force="low"
 else
-  force="muted"
+  force="off"
 fi
 
 if [ "$volume" -gt "100" ]; then
