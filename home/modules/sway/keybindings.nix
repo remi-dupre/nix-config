@@ -1,20 +1,12 @@
-{ lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
   action = (import ../../common/actions.nix inputs);
   bin = (import ../../common/binaries.nix inputs);
   script = (import ../../common/scripts inputs);
   modifier = "Mod4";
-
-  # TODO : actual module params
-  ctx = {
-    screen = {
-      width = 2560;
-      height = 1600;
-      scale = 1.20;
-    };
-  };
 in
+
 {
   wayland.windowManager.sway.config = {
     keybindings =
@@ -31,25 +23,25 @@ in
         "Mod1+c" = "exec ${bin.rofimoji} -f 'emojis_*' 'mathematical_*' 'miscellaneous_symbols_and_arrows' --hidden-description --selector-args '-theme rofimoji'";
         "Mod1+F4" = "kill";
         # Screenshot
-        "Print" = ''exec ${script.screenshot} "screen" && ${action.sample "camera-shutter"}'';
-        "Shift+Print" = ''exec ${script.screenshot} "area" && ${action.sample "camera-shutter"}'';
-        "Control+Print" = ''exec ${script.screenshot} "window" && ${action.sample "camera-shutter"}'';
+        "Print" = ''exec ${script.bin.screenshot} "screen" && ${action.sample "camera-shutter"}'';
+        "Shift+Print" = ''exec ${script.bin.screenshot} "area" && ${action.sample "camera-shutter"}'';
+        "Control+Print" = ''exec ${script.bin.screenshot} "window" && ${action.sample "camera-shutter"}'';
         # Sound
-        "XF86AudioRaiseVolume" = "exec '${action.sound.mute "off"} & ${action.sound.volume "+5%"} & ${script.notify.sound} & ${action.sample "audio-volume-change"}'";
-        "XF86AudioLowerVolume" = "exec '${action.sound.mute "off"} & ${action.sound.volume "-5%"} & ${script.notify.sound} & ${action.sample "audio-volume-change"}'";
-        "XF86AudioMute" = "exec '${action.sound.mute "toggle"} & ${script.notify.sound} & ${action.sample "audio-volume-change"}'";
+        "XF86AudioRaiseVolume" = "exec '${action.sound.mute "off"} & ${action.sound.volume "+5%"} & ${script.bin.notify.sound} & ${action.sample "audio-volume-change"}'";
+        "XF86AudioLowerVolume" = "exec '${action.sound.mute "off"} & ${action.sound.volume "-5%"} & ${script.bin.notify.sound} & ${action.sample "audio-volume-change"}'";
+        "XF86AudioMute" = "exec '${action.sound.mute "toggle"} & ${script.bin.notify.sound} & ${action.sample "audio-volume-change"}'";
         # Microphone
-        "Shift+XF86AudioRaiseVolume" = "exec '${action.micro.mute "off"} & ${action.micro.volume "+5%"} & ${script.notify.micro}'";
-        "Shift+XF86AudioLowerVolume" = "exec '${action.micro.mute "off"} & ${action.micro.volume "-5%"} & ${script.notify.micro}'";
-        "Shift+XF86AudioMute" = "exec '${action.micro.mute "toggle"}; ${script.notify.micro}'";
+        "Shift+XF86AudioRaiseVolume" = "exec '${action.micro.mute "off"} & ${action.micro.volume "+5%"} & ${script.bin.notify.micro}'";
+        "Shift+XF86AudioLowerVolume" = "exec '${action.micro.mute "off"} & ${action.micro.volume "-5%"} & ${script.bin.notify.micro}'";
+        "Shift+XF86AudioMute" = "exec '${action.micro.mute "toggle"}; ${script.bin.notify.micro}'";
         #  MPD Control
         "xf86audioplay" = "exec ${bin.playerctl} play-pause";
         "xf86audionext" = "exec ${bin.playerctl} next";
         "xf86audioprev" = "exec ${bin.playerctl} prev";
         "xf86audiostop" = "exec ${bin.playerctl} stop";
         # Brightness
-        "XF86MonBrightnessUp" = "exec '${bin.brightnessctl} set 5%+ && ${script.notify.brightness}'";
-        "XF86MonBrightnessDown" = "exec '${bin.brightnessctl} set 5%- && ${script.notify.brightness}'";
+        "XF86MonBrightnessUp" = "exec '${bin.brightnessctl} set 5%+ && ${script.bin.notify.brightness}'";
+        "XF86MonBrightnessDown" = "exec '${bin.brightnessctl} set 5%- && ${script.bin.notify.brightness}'";
         # Rebuild config and reload
         "${modifier}+Shift+r" = "swaymsg reload";
         # Always on top window
@@ -59,9 +51,9 @@ in
           let
             ratio = 0.20;
             margin = 25;
-            width = builtins.floor (ratio * ctx.screen.width);
+            width = builtins.floor (ratio * config.desktop.screen.width);
             height = builtins.floor (width * 9 / 16);
-            pos-x = builtins.floor (ctx.screen.width / ctx.screen.scale - width - margin);
+            pos-x = builtins.floor (config.desktop.screen.width / config.desktop.screen.scale - width - margin);
           in
           lib.strings.concatStringsSep " ; " [
             "floating enable; sticky enable"

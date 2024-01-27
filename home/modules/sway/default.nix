@@ -1,31 +1,17 @@
-{ lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
-  # TODO : actual module params
-  ctx = {
-    screen = {
-      width = 2560;
-      height = 1600;
-      scale = 1.20;
-    };
-    font = {
-      default = "NotoSans Nerd Font";
-      compact = "NotoSans Nerd Font SemiCondensed";
-      monospace = "FiraMono Nerd Font";
-    };
-  };
-
-  # Ressources
-  fonts-pkg = pkgs.nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; };
-  fonts-dir = "${fonts-pkg}/share/fonts/truetype/NerdFonts";
   lock-wallpaper = "~/.lock-wallpaper.png";
-  action = (import ../../common/actions.nix inputs);
-  bin = (import ../../common/binaries.nix inputs);
-  scripts = (import ../../common/scripts inputs);
+  action = import ../../common/actions.nix inputs;
+  bin = import ../../common/binaries.nix inputs;
+  font = import ../../common/fonts.nix inputs;
+  script = import ../../common/scripts inputs;
 in
 {
   imports = [
     ./bar.nix
+    ./dunst.nix
+    ./gammastep.nix
     ./keybindings.nix
   ];
 
@@ -45,18 +31,18 @@ in
       startup = [
         {
           command = lib.strings.concatStringsSep " " [
-            scripts.update-wallpaper
-            (toString ctx.screen.width)
-            (toString ctx.screen.height)
-            "${fonts-dir}/NotoSansNerdFont-Regular.ttf"
+            script.bin.update-wallpaper
+            (toString config.desktop.screen.width)
+            (toString config.desktop.screen.height)
+            "${font.directory}/NotoSansNerdFont-Regular.ttf"
             lock-wallpaper
           ];
         }
       ];
 
       fonts = {
-        names = [ ctx.font.default ];
-        size = 10.0;
+        names = [ font.default ];
+        size = font.size;
       };
 
       input = {
@@ -66,7 +52,7 @@ in
 
       output = {
         "*" = {
-          scale = toString ctx.screen.scale;
+          scale = toString config.desktop.screen.scale;
           bg = "${../../static/wallpaper.jpg} fill";
         };
       };
@@ -88,5 +74,40 @@ in
         titlebar = false;
       };
     };
+  };
+
+  programs.swaylock = {
+    enable = true;
+
+    settings = {
+      image = "${lock-wallpaper}";
+      ignore-empty-password = true;
+    };
+  };
+
+  services.swayidle = {
+    enable = true;
+
+    events = [
+      {
+        event = "before-sleep";
+        command = action.lock;
+      }
+      {
+        event = "after-resume";
+        command = ''swaymsg "output * power on"'';
+      }
+    ];
+
+    timeouts = [
+      {
+        timeout = 1795;
+        command = ''swaymsg "output * power off"'';
+      }
+      {
+        timeout = 1800;
+        command = action.lock;
+      }
+    ];
   };
 }

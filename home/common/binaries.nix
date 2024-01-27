@@ -8,6 +8,7 @@ with pkgs; {
   dunstify = "${dunst}/bin/dunstify";
   firefox = "${firefox-devedition}/bin/firefox-devedition";
   foot = "${foot}/bin/foot";
+  nvim = "${neovim}/bin/nvim";
   pacmd = "${pulseaudio}/bin/pacmd";
   pactl = "${pulseaudio}/bin/pactl";
   playerctl = "${playerctl}/bin/playerctl";

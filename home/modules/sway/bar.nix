@@ -1,24 +1,10 @@
 { lib, pkgs, ... } @ inputs:
 
 let
-  # TODO : actual module params
-  ctx = {
-    screen = {
-      width = 2560;
-      height = 1600;
-      scale = 1.20;
-    };
-    font = {
-      default = "NotoSans Nerd Font";
-      compact = "NotoSans Nerd Font SemiCondensed";
-      monospace = "FiraMono Nerd Font";
-    };
-  };
-
-  action = (import ../../common/actions.nix inputs);
-  bin = (import ../../common/binaries.nix inputs);
-  color = (import ../../common/colors.nix inputs);
-  script = (import ../../common/scripts inputs);
+  action = import ../../common/actions.nix inputs;
+  bin = import ../../common/binaries.nix inputs;
+  color = import ../../common/colors.nix inputs;
+  font = import ../../common/fonts.nix inputs;
 in
 
 {
@@ -28,8 +14,8 @@ in
     trayOutput = "none";
 
     fonts = {
-      names = [ ctx.font.compact ];
-      size = 10.0;
+      names = [ font.compact ];
+      size = font.size;
     };
 
     colors = {
@@ -45,7 +31,7 @@ in
       inactiveWorkspace = with color; {
         background = back;
         border = back;
-        text = font;
+        text = color.font;
       };
     };
   }];
