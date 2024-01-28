@@ -14,5 +14,6 @@ with pkgs; {
   playerctl = "${playerctl}/bin/playerctl";
   rofi = "${rofi-wayland}/bin/rofi";
   rofimoji = "${rofimoji}/bin/rofimoji";
+  wl-gammarelay-rs = "${wl-gammarelay-rs}/bin/wl-gammarelay-rs";
   wl-paste = "${wl-clipboard}/bin/wl-paste";
 }

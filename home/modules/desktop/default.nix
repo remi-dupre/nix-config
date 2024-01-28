@@ -3,6 +3,7 @@
 let
   bin = import ../../common/binaries.nix inputs;
   font = import ../../common/fonts.nix inputs;
+  script = import ../../common/scripts inputs;
 in
 
 {
@@ -36,24 +37,27 @@ in
       packages = with pkgs; [
         adw-gtk3 # The theme from libadwaita ported to GTK-3
         font.pkg
-        xdg-utils # A set of command line tools that assist applications with a variety of desktop integration tasks
+        xdg-utils # A set of command line tools that assist applications wit...
 
         # Desktop Applications
         evince # GNOME's document viewer
         gimp # The GNU Image Manipulation Program
         gnome.file-roller # Archive manager for the GNOME desktop environment
         gnome.nautilus # The file manager for GNOME
-        libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
+        libreoffice # Comprehensive, professional-quality productivity suite...
         loupe # A simple image viewer application written with GTK4 and Rust
         pavucontrol # PulseAudio Volume Control
         qgis # A Free and Open Source Geographic Information System
         signal-desktop # Private, simple, and secure messenger
-        wdisplays # A graphical application for configuring displays in Wayland compositors
+        wdisplays # A graphical application for configuring displays in Wayl...
+        wl-gammarelay-rs # A simple program that provides DBus interface to ...
       ];
 
       sessionVariables = {
         GTK_THEME = "adw-gtk3-dark";
-        NIXOS_OZONE_WL = "1"; # See https://nixos.wiki/wiki/Wayland
+        # Workarround for wayland on electron apps. See
+        # https://nixos.wiki/wiki/Wayland
+        NIXOS_OZONE_WL = "1";
       };
 
       pointerCursor = {
@@ -129,5 +133,14 @@ in
       enable = true;
       package = pkgs.firefox-devedition;
     };
+
+    systemd.user.services = {
+      gammarelay-sun = {
+        Unit.Description = "Control wl-gammarelay-rs depending on sun position.";
+        Service.ExecStart = "${script.bin.gammarelay-sun}";
+        Install.WantedBy = [ "multi-user.target" ];
+      };
+    };
   };
 }
+

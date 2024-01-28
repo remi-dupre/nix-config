@@ -10,6 +10,11 @@ rec {
       '';
     };
 
+    gammarelay-sun = pkgs.writers.writePython3Bin
+      "gammarelay-sun"
+      { libraries = with pkgs.python3Packages; [ astral dbus-python ]; }
+      (builtins.readFile ./gammarelay-sun.py);
+
     notify.sound = pkgs.writeShellApplication {
       name = "notify-sound";
       runtimeInputs = with pkgs; [ pulseaudio dunst ];
@@ -42,6 +47,7 @@ rec {
 
   bin = {
     config-rebuild = "${pkg.config-rebuild}/bin/config-rebuild";
+    gammarelay-sun = "${pkg.gammarelay-sun}/bin/gammarelay-sun";
     notify.sound = "${pkg.notify.sound}/bin/notify-sound";
     notify.micro = "${pkg.notify.micro}/bin/notify-micro";
     notify.brightness = "${pkg.notify.brightness}/bin/notify-brightness";

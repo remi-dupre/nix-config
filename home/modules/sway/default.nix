@@ -11,7 +11,6 @@ in
   imports = [
     ./bar.nix
     ./dunst.nix
-    ./gammastep.nix
     ./keybindings.nix
   ];
 

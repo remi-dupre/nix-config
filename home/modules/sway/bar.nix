@@ -150,6 +150,18 @@ in
             }
             (spacer separator)
             {
+              block = "hueshift";
+              format = " $temperature";
+              hue_shifter = "wl_gammarelay_rs";
+
+              click = [
+                {
+                  button = "right";
+                  cmd = "systemctl restart --user gammarelay-sun.service";
+                }
+              ];
+            }
+            {
               block = "backlight";
             }
             {
