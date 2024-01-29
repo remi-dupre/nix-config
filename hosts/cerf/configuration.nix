@@ -15,8 +15,6 @@ in
   zramSwap.enable = true;
 
   nix.settings = {
-    cores = 6;
-    max-jobs = 4;
     auto-optimise-store = true;
     experimental-features = [ "nix-command" "flakes" ];
   };
