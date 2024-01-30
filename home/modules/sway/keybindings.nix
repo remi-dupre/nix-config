@@ -51,9 +51,9 @@ in
           let
             ratio = 0.20;
             margin = 25;
-            width = builtins.floor (ratio * config.desktop.screen.width);
+            width = builtins.floor (ratio * config.desktop.display.width);
             height = builtins.floor (width * 9 / 16);
-            pos-x = builtins.floor (config.desktop.screen.width / config.desktop.screen.scale - width - margin);
+            pos-x = builtins.floor (config.desktop.display.width / config.desktop.display.scale - width - margin);
           in
           lib.strings.concatStringsSep " ; " [
             "floating enable; sticky enable"

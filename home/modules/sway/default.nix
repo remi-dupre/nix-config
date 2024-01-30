@@ -31,8 +31,8 @@ in
         {
           command = lib.strings.concatStringsSep " " [
             script.bin.update-wallpaper
-            (toString config.desktop.screen.width)
-            (toString config.desktop.screen.height)
+            (toString config.desktop.display.width)
+            (toString config.desktop.display.height)
             "${font.directory}/NotoSansNerdFont-Regular.ttf"
             lock-wallpaper
           ];
@@ -51,7 +51,7 @@ in
 
       output = {
         "*" = {
-          scale = toString config.desktop.screen.scale;
+          scale = toString config.desktop.display.scale;
           bg = "${../../static/wallpaper.jpg} fill";
         };
       };
@@ -60,7 +60,6 @@ in
         criteria = [
           { app_id = "blueman-manager"; }
           { app_id = "pavucontrol"; }
-          { app_id = "wdisplays"; }
           { title = "Extension:*"; }
           { title = "Firefox Developer Edition — Sharing Indicator"; }
           { title = "Firefox — Sharing Indicator"; }
@@ -108,5 +107,13 @@ in
         command = action.lock;
       }
     ];
+  };
+
+  systemd.user.services = {
+    gammarelay-sun = {
+      Unit.Description = "Control wl-gammarelay-rs depending on sun position.";
+      Service.ExecStart = "${script.bin.gammarelay-sun}";
+      Install.WantedBy = [ "sway-session.target" ];
+    };
   };
 }

@@ -111,7 +111,8 @@ in
       enable = true;
 
       libraries = with pkgs; [
-        openssl
+        openssl # A cryptographic library that implements the SSL and TLS protocols
+        zlib # Lossless data-compression library
       ];
     };
 
@@ -213,6 +214,7 @@ in
       # Dev Libraries
       geos
       gdal
+      zlib # Lossless data-compression library
     ];
 
     variables = {

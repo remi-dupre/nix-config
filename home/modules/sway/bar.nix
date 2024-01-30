@@ -1,4 +1,4 @@
-{ lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
   action = import ../../common/actions.nix inputs;
@@ -12,6 +12,10 @@ in
     statusCommand = "SHELL=${bin.bash} i3status-rs ~/.config/i3status-rust/config-default.toml";
     position = "top";
     trayOutput = "none";
+
+    extraConfig = ''
+      output ${config.desktop.display.name}
+    '';
 
     fonts = {
       names = [ font.compact ];

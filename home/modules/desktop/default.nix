@@ -3,18 +3,22 @@
 let
   bin = import ../../common/binaries.nix inputs;
   font = import ../../common/fonts.nix inputs;
-  script = import ../../common/scripts inputs;
 in
 
 {
   imports = [
     ./foot.nix
+    ./gtk.nix
   ];
 
   options.desktop = {
-    screen = lib.mkOption {
+    display = lib.mkOption {
       type = lib.types.submodule {
         options = {
+          name = lib.mkOption {
+            type = lib.types.string;
+          };
+
           width = lib.mkOption {
             type = lib.types.int;
           };
@@ -35,7 +39,6 @@ in
   config = {
     home = {
       packages = with pkgs; [
-        adw-gtk3 # The theme from libadwaita ported to GTK-3
         font.pkg
         xdg-utils # A set of command line tools that assist applications wit...
 
@@ -49,16 +52,14 @@ in
         pavucontrol # PulseAudio Volume Control
         qgis # A Free and Open Source Geographic Information System
         signal-desktop # Private, simple, and secure messenger
+        vlc # Cross-platform media player and streaming server
         wdisplays # A graphical application for configuring displays in Wayl...
         wl-gammarelay-rs # A simple program that provides DBus interface to ...
       ];
 
-      sessionVariables = {
-        GTK_THEME = "adw-gtk3-dark";
-        # Workarround for wayland on electron apps. See
-        # https://nixos.wiki/wiki/Wayland
-        NIXOS_OZONE_WL = "1";
-      };
+      # Workarround for wayland on electron apps. See
+      # https://nixos.wiki/wiki/Wayland
+      sessionVariables.NIXOS_OZONE_WL = "1";
 
       pointerCursor = {
         name = "Adwaita";
@@ -114,32 +115,10 @@ in
       };
     };
 
-    gtk.gtk3.bookmarks = [
-      "/tmp"
-      "${config.home.homeDirectory}/documents"
-      "${config.home.homeDirectory}/downloads"
-    ];
-
-    dconf = {
-      enable = true;
-      settings."org/gnome/desktop/interface" = {
-        color-scheme = "prefer-dark"; # gtk 4
-        font-name = "${font.default} ${toString font.size}";
-      };
-    };
-
     # A web browser built from Firefox source tree
     programs.firefox = {
       enable = true;
       package = pkgs.firefox-devedition;
-    };
-
-    systemd.user.services = {
-      gammarelay-sun = {
-        Unit.Description = "Control wl-gammarelay-rs depending on sun position.";
-        Service.ExecStart = "${script.bin.gammarelay-sun}";
-        Install.WantedBy = [ "multi-user.target" ];
-      };
     };
   };
 }
