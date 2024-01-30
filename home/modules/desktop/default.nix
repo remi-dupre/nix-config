@@ -9,6 +9,7 @@ in
   imports = [
     ./foot.nix
     ./gtk.nix
+    ./nautilus.nix
   ];
 
   options.desktop = {
@@ -39,14 +40,16 @@ in
   config = {
     home = {
       packages = with pkgs; [
+        # Custom packages
         font.pkg
+
+        # Terminal utilities
         xdg-utils # A set of command line tools that assist applications wit...
 
         # Desktop Applications
         evince # GNOME's document viewer
         gimp # The GNU Image Manipulation Program
         gnome.file-roller # Archive manager for the GNOME desktop environment
-        gnome.nautilus # The file manager for GNOME
         libreoffice # Comprehensive, professional-quality productivity suite...
         loupe # A simple image viewer application written with GTK4 and Rust
         pavucontrol # PulseAudio Volume Control
@@ -122,4 +125,3 @@ in
     };
   };
 }
-

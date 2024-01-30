@@ -14,6 +14,10 @@ in
     ./keybindings.nix
   ];
 
+  home.packages = with pkgs; [
+    wl-gammarelay-rs
+  ];
+
   wayland.windowManager.sway = {
     enable = true;
     extraConfig = "bindswitch --reload --locked lid:on exec ${action.lock}";
