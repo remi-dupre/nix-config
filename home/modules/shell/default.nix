@@ -8,24 +8,6 @@ let
       pkgs.kubernetes-helmPlugins.helm-secrets
     ];
   };
-
-  pkg-python = pkgs.python3.withPackages (ps: with ps; [
-    httpie
-    python-lsp-server
-    (buildPythonPackage
-      rec {
-        pname = "httpie-credential-store";
-        version = "3.0.0";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "sha256-MfURNdYPatsnKnC6O9dFFCcVFC1SUZ4l33E208rSNis=";
-        };
-        doCheck = false;
-        propagatedBuildInputs = [
-          keyring
-        ];
-      })
-  ]);
 in
 
 {
@@ -57,6 +39,27 @@ in
     direnv.enable = true; # A shell extension that manages your environment
     nix-index.enable = true; # A files database for nixpkgs
 
+    python = {
+      enable = true;
+
+      libraries = ps: with ps; [
+        httpie
+        python-lsp-server
+
+        (buildPythonPackage
+          rec {
+            pname = "httpie-credential-store";
+            version = "3.0.0";
+            src = fetchPypi {
+              inherit pname version;
+              sha256 = "sha256-MfURNdYPatsnKnC6O9dFFCcVFC1SUZ4l33E208rSNis=";
+            };
+            doCheck = false;
+            propagatedBuildInputs = [ keyring ];
+          })
+      ];
+    };
+
     tmux = {
       enable = true;
       mouse = true;
@@ -86,7 +89,6 @@ in
     openssl # A cryptographic library that implements the SSL and TLS protocols
     pkg-config # A tool that allows packages to find out information about o...
     pkg-helm # A package manager for kubernetes
-    pkg-python # A high-level dynamically-typed programming language
     poetry # Python dependency management and packaging made easy
     pre-commit # A framework for managing and maintaining multi-language pre...
     ruff # An extremely fast Python linter

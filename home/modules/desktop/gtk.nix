@@ -18,9 +18,7 @@ in
 
     gtk3 = {
       bookmarks = [
-        "/tmp"
-        "${config.home.homeDirectory}/documents"
-        "${config.home.homeDirectory}/downloads"
+        "file:///tmp"
       ];
 
       # Force straight corners, which works better in tiling mode. Inspired from

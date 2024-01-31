@@ -13,7 +13,8 @@ in
       lib.mkOptionDefault {
         # Application shortcuts
         "${modifier}+l" = "exec ${action.lock}";
-        "Control+Mod1+d" = "exec nautilus";
+        "Control+Mod1+t" = "exec foot";
+        "Control+Mod1+d" = "exec nautilus -w";
         "Control+Mod1+f" = "exec ${bin.firefox}";
         "Control+Shift+p" = "exec ${bin.firefox} --private-window";
         "Control+Mod1+s" = "exec pavucontrol";

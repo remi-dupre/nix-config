@@ -2,6 +2,7 @@
 
 rec {
   imports = [
+    ./python.nix
     ./modules/shell
     ./modules/sway
     ./modules/desktop

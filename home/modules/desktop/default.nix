@@ -17,7 +17,7 @@ in
       type = lib.types.submodule {
         options = {
           name = lib.mkOption {
-            type = lib.types.string;
+            type = lib.types.str;
           };
 
           width = lib.mkOption {
