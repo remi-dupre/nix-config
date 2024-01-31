@@ -8,7 +8,7 @@ let
   modifier = "Mod4";
 in
 
-{
+lib.mkIf config.repo.sway {
   wayland.windowManager.sway.config = {
     keybindings =
       lib.mkOptionDefault {

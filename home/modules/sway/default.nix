@@ -16,66 +16,114 @@ in
     ./keybindings.nix
   ];
 
-  wayland.windowManager.sway = {
-    enable = true;
-    extraConfig = "bindswitch --reload --locked lid:on exec ${action.lock}";
-
-    wrapperFeatures = {
-      base = true;
-      gtk = true;
-    };
-
-    config = {
-      modifier = "Mod4";
-      terminal = bin.foot;
-
-      startup = [
-        {
-          command = lib.strings.concatStringsSep " " [
-            script.bin.update-wallpaper
-            (toString cfg-display.width)
-            (toString cfg-display.height)
-            "${font.directory}/NotoSansNerdFont-Regular.ttf"
-            lock-wallpaper
-          ];
-        }
-      ];
-
-      fonts = {
-        names = [ font.default ];
-        size = font.size;
-      };
-
-      input = {
-        "*".xkb_layout = "fr";
-        "type:touchpad".tap = "enabled";
-      };
-
-      output = {
-        "*" = {
-          scale = toString cfg-display.scale;
-          bg = "${../../static/wallpaper.jpg} fill";
-        };
-      };
-
-      floating = {
-        criteria = [
-          { app_id = "blueman-manager"; }
-          { app_id = "pavucontrol"; }
-          { title = "Extension:*"; }
-          { title = "Firefox Developer Edition — Sharing Indicator"; }
-          { title = "Firefox — Sharing Indicator"; }
-        ];
-      };
-
-      window = {
-        hideEdgeBorders = "both";
-        border = 1;
-        titlebar = false;
-      };
+  options.repo.sway = with lib.types; {
+    enable = lib.mkOption {
+      default = false;
+      type = bool;
     };
   };
 
+  home.packages = with pkgs; [
+    wl-gammarelay-rs
+  ];
+
+  config = lib.mkIf config.repo.sway.enable {
+    wayland.windowManager.sway = {
+      enable = true;
+      extraConfig = "bindswitch --reload --locked lid:on exec ${action.lock}";
+
+      wrapperFeatures = {
+        base = true;
+        gtk = true;
+      };
+
+      config = {
+        modifier = "Mod4";
+        terminal = bin.foot;
+
+        startup = [
+          {
+            command = lib.strings.concatStringsSep " " [
+              script.bin.update-wallpaper
+              (toString cfg-display.width)
+              (toString cfg-display.height)
+              "${font.directory}/NotoSansNerdFont-Regular.ttf"
+              lock-wallpaper
+            ];
+          }
+        ];
+
+        fonts = {
+          names = [ font.default ];
+          size = font.size;
+        };
+
+        input = {
+          "*".xkb_layout = "fr";
+          "type:touchpad".tap = "enabled";
+        };
+
+        output = {
+          "*" = {
+            scale = toString cfg-display.scale;
+            bg = "${../../static/wallpaper.jpg} fill";
+          };
+        };
+
+        floating = {
+          criteria = [
+            { app_id = "blueman-manager"; }
+            { app_id = "pavucontrol"; }
+            { title = "Extension:*"; }
+            { title = "Firefox Developer Edition — Sharing Indicator"; }
+            { title = "Firefox — Sharing Indicator"; }
+          ];
+        };
+
+        window = {
+          hideEdgeBorders = "both";
+          border = 1;
+          titlebar = false;
+        };
+      };
+    };
+
+    programs.swaylock = {
+      enable = true;
+
+      settings = {
+        image = "${lock-wallpaper}";
+        ignore-empty-password = true;
+      };
+    };
+
+    services.swayidle = {
+      enable = true;
+
+      events = [
+        {
+          event = "before-sleep";
+          command = action.lock;
+        }
+        {
+          event = "after-resume";
+          command = ''swaymsg "output * power on"'';
+        }
+      ];
+
+      timeouts = [
+        {
+          timeout = 1795;
+          command = ''swaymsg "output * power off"'';
+        }
+        {
+          timeout = 1800;
+          command = action.lock;
+        }
+      ];
+    };
+
+<<<<<<< HEAD
   programs.swaylock = {
     enable = true;
 
@@ -111,4 +159,14 @@ in
     ];
   };
 
+=======
+    systemd.user.services = {
+      gammarelay-sun = {
+        Unit.Description = "Control wl-gammarelay-rs depending on sun position.";
+        Service.ExecStart = "${script.bin.gammarelay-sun}";
+        Install.WantedBy = [ "sway-session.target" ];
+      };
+    };
+  };
+>>>>>>> 60b6df6 (add fp3 configuration)
 }

@@ -8,7 +8,7 @@ let
   cfg-display = config.repo.desktop.display;
 in
 
-{
+lib.mkIf config.repo.sway {
   wayland.windowManager.sway.config.bars = [{
     statusCommand = "SHELL=${bin.bash} i3status-rs ~/.config/i3status-rust/config-default.toml";
     position = "top";

@@ -18,14 +18,18 @@ rec {
   programs.home-manager.enable = true;
   services.mpris-proxy.enable = true;
 
-  repo.desktop = {
-    enable = false; # TODO
+  repo = {
+    sway.enable = false; # TODO
 
-    display = {
-      name = "eDP-1";
-      width = 2560;
-      height = 1600;
-      scale = 1.20;
+    desktop = {
+      enable = false; # TODO
+
+      display = {
+        name = "eDP-1";
+        width = 2560;
+        height = 1600;
+        scale = 1.20;
+      };
     };
   };
 
