@@ -1,10 +1,11 @@
-{ config, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
   font = import ../../common/fonts.nix inputs;
+  cfg = config.repo.desktop;
 in
 
-{
+lib.mkIf cfg.enable {
   home = {
     packages = with pkgs; [
       adw-gtk3 # The theme from libadwaita ported to GTK-3

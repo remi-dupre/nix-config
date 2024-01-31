@@ -4,6 +4,7 @@ let
   action = (import ../../common/actions.nix inputs);
   bin = (import ../../common/binaries.nix inputs);
   script = (import ../../common/scripts inputs);
+  cfg-display = config.repo.desktop.display;
   modifier = "Mod4";
 in
 
@@ -61,9 +62,9 @@ in
           let
             ratio = 0.20;
             margin = 25;
-            width = builtins.floor (ratio * config.desktop.display.width);
+            width = builtins.floor (ratio * cfg-display.width);
             height = builtins.floor (width * 9 / 16);
-            pos-x = builtins.floor (config.desktop.display.width / config.desktop.display.scale - width - margin);
+            pos-x = builtins.floor (cfg-display.width / cfg-display.scale - width - margin);
           in
           lib.strings.concatStringsSep " ; " [
             "floating enable; sticky enable"

@@ -1,8 +1,8 @@
-{ git-nautilus-icons, pkgs, ... }:
-
-
+{ config, git-nautilus-icons, pkgs, lib, ... }:
 
 let
+  cfg = config.repo.desktop;
+
   # A nautilus Python extension to overlay icons on files in git repositories
   git-nautilus-icons.url = github:chrisjbillington/git-nautilus-icons;
 
@@ -17,7 +17,7 @@ let
   };
 in
 
-{
+lib.mkIf cfg.enable {
   home = {
     packages = [ nautEnv ];
     sessionVariables.NAUTILUS_4_EXTENSION_DIR = "${nautEnv}/lib/nautilus/extensions-4";

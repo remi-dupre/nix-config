@@ -3,6 +3,7 @@
 let
   bin = import ../../common/binaries.nix inputs;
   font = import ../../common/fonts.nix inputs;
+  cfg = config.repo.desktop;
 in
 
 {
@@ -13,24 +14,29 @@ in
     ./nautilus.nix
   ];
 
-  options.desktop = {
+  options.repo.desktop = with lib.types; {
+    enable = lib.mkOption {
+      default = false;
+      type = bool;
+    };
+
     display = lib.mkOption {
-      type = lib.types.submodule {
+      type = submodule {
         options = {
           name = lib.mkOption {
-            type = lib.types.str;
+            type = str;
           };
 
           width = lib.mkOption {
-            type = lib.types.int;
+            type = int;
           };
 
           height = lib.mkOption {
-            type = lib.types.int;
+            type = int;
           };
 
           scale = lib.mkOption {
-            type = lib.types.float;
+            type = float;
             default = 1.2;
           };
         };
@@ -38,7 +44,7 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     home = {
       packages = with pkgs; [
         # Custom packages
@@ -145,9 +151,11 @@ in
     };
 
     # A web browser built from Firefox source tree
-    programs.firefox = {
-      enable = true;
-      package = pkgs.firefox-devedition;
+    programs = {
+      firefox = {
+        enable = true;
+        package = pkgs.firefox-devedition;
+      };
     };
 
     # An open source web browser from Google, with dependencies on Google web services removed

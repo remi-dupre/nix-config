@@ -6,6 +6,7 @@ let
   bin = import ../../common/binaries.nix inputs;
   font = import ../../common/fonts.nix inputs;
   script = import ../../common/scripts inputs;
+  cfg-display = config.repo.desktop.display;
 in
 
 {
@@ -32,8 +33,8 @@ in
         {
           command = lib.strings.concatStringsSep " " [
             script.bin.update-wallpaper
-            (toString config.desktop.display.width)
-            (toString config.desktop.display.height)
+            (toString cfg-display.width)
+            (toString cfg-display.height)
             "${font.directory}/NotoSansNerdFont-Regular.ttf"
             lock-wallpaper
           ];
@@ -52,7 +53,7 @@ in
 
       output = {
         "*" = {
-          scale = toString config.desktop.display.scale;
+          scale = toString cfg-display.scale;
           bg = "${../../static/wallpaper.jpg} fill";
         };
       };

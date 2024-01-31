@@ -5,6 +5,7 @@ let
   bin = import ../../common/binaries.nix inputs;
   color = import ../../common/colors.nix inputs;
   font = import ../../common/fonts.nix inputs;
+  cfg-display = config.repo.desktop.display;
 in
 
 {
@@ -12,6 +13,10 @@ in
     statusCommand = "SHELL=${bin.bash} i3status-rs ~/.config/i3status-rust/config-default.toml";
     position = "top";
     trayOutput = "none";
+
+    extraConfig = ''
+      output ${cfg-display.name}
+    '';
 
     fonts = {
       names = [ font.compact ];
