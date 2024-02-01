@@ -19,15 +19,15 @@
         modules = [ ./hosts/cerf/configuration.nix ];
       };
 
-      fp3 = nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
+      sncf = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
         specialArgs = attrs;
-        modules = [ ./hosts/fp3/configuration.nix ];
+        modules = [ ./hosts/sncf.nix ];
       };
     };
 
     nixOnDroidConfigurations.fp3 = nix-on-droid.lib.nixOnDroidConfiguration {
-      modules = [ ./hosts/fp3/configuration.nix ];
+      modules = [ ./hosts/fp3.nix ];
     };
   };
 }
