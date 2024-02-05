@@ -117,12 +117,32 @@ in
         pictures = null;
         videos = null;
       };
+
+      mimeApps = {
+        enable = true;
+
+        defaultApplications = {
+          "text/html" = "firefox-devedition.desktop";
+          "application/pdf" = "org.gnome.Evince.desktop";
+          "text/csv" = "nvim.desktop";
+          "image/jpeg" = "org.gnome.Loupe.desktop";
+          "image/png" = "org.gnome.Loupe.desktop";
+          "image/svg+xml" = "org.gnome.Loupe.desktop";
+        };
+      };
+
     };
 
     # A web browser built from Firefox source tree
     programs.firefox = {
       enable = true;
       package = pkgs.firefox-devedition;
+    };
+
+    # An open source web browser from Google, with dependencies on Google web services removed
+    programs.chromium = {
+      enable = true;
+      package = pkgs.ungoogled-chromium;
     };
   };
 }
