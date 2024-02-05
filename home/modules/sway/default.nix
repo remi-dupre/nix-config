@@ -7,15 +7,12 @@ let
   font = import ../../common/fonts.nix inputs;
   script = import ../../common/scripts inputs;
 in
+
 {
   imports = [
     ./bar.nix
     ./dunst.nix
     ./keybindings.nix
-  ];
-
-  home.packages = with pkgs; [
-    wl-gammarelay-rs
   ];
 
   wayland.windowManager.sway = {
@@ -113,11 +110,4 @@ in
     ];
   };
 
-  systemd.user.services = {
-    gammarelay-sun = {
-      Unit.Description = "Control wl-gammarelay-rs depending on sun position.";
-      Service.ExecStart = "${script.bin.gammarelay-sun}";
-      Install.WantedBy = [ "sway-session.target" ];
-    };
-  };
 }

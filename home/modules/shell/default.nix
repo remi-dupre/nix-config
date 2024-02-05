@@ -83,6 +83,7 @@ in
 
     # Programming
     cargo # Downloads your Rust project's dependencies and builds your project
+    clippy # A bunch of lints to catch common mistakes and improve your Rust code
     gcc # GNU Compiler Collection (wrapper script)
     gitleaks # Scan git repos (or files) for secrets
     helm-docs # A tool for automatically generating markdown documentation f...
@@ -92,6 +93,9 @@ in
     poetry # Python dependency management and packaging made easy
     pre-commit # A framework for managing and maintaining multi-language pre...
     ruff # An extremely fast Python linter
+    rust-analyzer # A modular compiler frontend for the Rust language
+    rustc # A safe, concurrent, practical language
+    rustfmt # A tool for formatting Rust code according to style guidelines
 
     # IDE Integration
     rnix-lsp # A work-in-progress language server for Nix, with syntax check...

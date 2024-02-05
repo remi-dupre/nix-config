@@ -8,6 +8,7 @@ in
 {
   imports = [
     ./foot.nix
+    ./gammarelay.nix
     ./gtk.nix
     ./nautilus.nix
   ];

@@ -13,10 +13,6 @@ in
     position = "top";
     trayOutput = "none";
 
-    extraConfig = ''
-      output ${config.desktop.display.name}
-    '';
-
     fonts = {
       names = [ font.compact ];
       size = font.size;
