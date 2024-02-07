@@ -121,14 +121,23 @@ in
       mimeApps = {
         enable = true;
 
-        defaultApplications = {
-          "text/html" = "firefox-devedition.desktop";
-          "application/pdf" = "org.gnome.Evince.desktop";
-          "text/csv" = "nvim.desktop";
-          "image/jpeg" = "org.gnome.Loupe.desktop";
-          "image/png" = "org.gnome.Loupe.desktop";
-          "image/svg+xml" = "org.gnome.Loupe.desktop";
-        };
+        defaultApplications =
+          let
+            browser = "firefox-devedition.desktop";
+            image-viewer = "org.gnome.Loupe.desktop";
+          in
+          {
+            "text/html" = browser;
+            "x-scheme-handler/http" = browser;
+            "x-scheme-handler/https" = browser;
+            "x-scheme-handler/about" = browser;
+            "x-scheme-handler/unknown" = browser;
+            "application/pdf" = "org.gnome.Evince.desktop";
+            "text/csv" = "nvim.desktop";
+            "image/jpeg" = image-viewer;
+            "image/png" = image-viewer;
+            "image/svg+xml" = image-viewer;
+          };
       };
 
     };
