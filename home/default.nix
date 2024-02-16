@@ -2,10 +2,11 @@
 
 rec {
   imports = [
-    ./python.nix
+    ./modules/desktop
     ./modules/shell
     ./modules/sway
-    ./modules/desktop
+    ./modules/work.nix
+    ./python.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

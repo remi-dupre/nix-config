@@ -1,4 +1,4 @@
-{ config, disko, home-manager, lib, pkgs, ... }:
+{ config, lib, pkgs, system, ... } @ inputs:
 
 let
   json = pkgs.formats.json { };
@@ -6,8 +6,8 @@ in
 
 {
   imports = [
-    home-manager.nixosModules.home-manager
-    disko.nixosModules.disko
+    inputs.home-manager.nixosModules.home-manager
+    inputs.disko.nixosModules.disko
     ./hardware-configuration.nix # Include the results of the hardware scan.
     ./disko-partitioning.nix
   ];
@@ -20,6 +20,8 @@ in
   };
 
   hardware = {
+    sane.enable = true; # enables support for SANE scanners
+
     bluetooth = {
       enable = true; # enables support for Bluetooth
       powerOnBoot = false; # powers up the default Bluetooth controller on boot
@@ -27,6 +29,11 @@ in
       # Allow to fetch battery level for connected devices
       # https://nixos.wiki/wiki/Bluetooth#Showing_battery_charge_of_bluetooth_devices
       settings.General.Experimental = true;
+    };
+
+    tuxedo-rs = {
+      enable = true;
+      tailor-gui.enable = true;
     };
   };
 
@@ -100,7 +107,7 @@ in
   users.users.remi = {
     isNormalUser = true;
     description = "Rémi Dupré";
-    extraGroups = [ "docker" "networkmanager" "wheel" ];
+    extraGroups = [ "docker" "networkmanager" "wheel" "scanner" "lp" ];
     shell = pkgs.fish;
   };
 
@@ -142,6 +149,13 @@ in
 
     # Prevents overheating on Intel CPUs
     thermald.enable = true;
+
+    # Support for network scanning:
+    # https://nixos.wiki/wiki/Scanners#Network_scanning
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+    };
 
     # Multimedia support
     pipewire = {
@@ -211,6 +225,7 @@ in
   environment = {
     systemPackages = with pkgs; [
       neovim
+      inputs.pinix.packages.x86_64-linux.pinix
       # Dev Libraries
       geos
       gdal

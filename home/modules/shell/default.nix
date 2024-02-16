@@ -74,7 +74,6 @@ in
     killall # Kill processes by name
     neovim # Vim text editor fork focused on extensibility and agility
     ripgrep # A utility that combines the usability of The Silver Searcher w...
-    script.pkg.config-rebuild # Shorcut to rebuild NixOS configuration
     syncthing # Open Source Continuous File Synchronization
     unzip # An extraction utility for archives compressed in .zip format
     wl-clipboard # Command-line copy/paste utilities for Wayland
@@ -82,8 +81,6 @@ in
     zip # Compressor/archiver for creating and modifying zipfiles
 
     # Programming
-    cargo # Downloads your Rust project's dependencies and builds your project
-    clippy # A bunch of lints to catch common mistakes and improve your Rust code
     gcc # GNU Compiler Collection (wrapper script)
     gitleaks # Scan git repos (or files) for secrets
     helm-docs # A tool for automatically generating markdown documentation f...
@@ -93,9 +90,7 @@ in
     poetry # Python dependency management and packaging made easy
     pre-commit # A framework for managing and maintaining multi-language pre...
     ruff # An extremely fast Python linter
-    rust-analyzer # A modular compiler frontend for the Rust language
-    rustc # A safe, concurrent, practical language
-    rustfmt # A tool for formatting Rust code according to style guidelines
+    rustup # The Rust toolchain installer
 
     # IDE Integration
     rnix-lsp # A work-in-progress language server for Nix, with syntax check...

@@ -51,6 +51,7 @@ in
         evince # GNOME's document viewer
         gimp # The GNU Image Manipulation Program
         gnome.file-roller # Archive manager for the GNOME desktop environment
+        gnome.simple-scan # Simple scanning utility
         libreoffice # Comprehensive, professional-quality productivity suite...
         loupe # A simple image viewer application written with GTK4 and Rust
         pavucontrol # PulseAudio Volume Control

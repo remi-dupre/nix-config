@@ -2,14 +2,6 @@
 
 rec {
   pkg = {
-    config-rebuild = pkgs.writeShellApplication {
-      name = "config-rebuild";
-      runtimeInputs = with pkgs; [ nix-output-monitor ];
-      text = ''
-        nixos-rebuild switch --print-build-logs --log-format internal-json --flake "$1" |& nom --json
-      '';
-    };
-
     gammarelay-sun = pkgs.writers.writePython3Bin
       "gammarelay-sun"
       { libraries = with pkgs.python3Packages; [ astral dbus-python ]; }
@@ -46,7 +38,6 @@ rec {
   };
 
   bin = {
-    config-rebuild = "${pkg.config-rebuild}/bin/config-rebuild";
     gammarelay-sun = "${pkg.gammarelay-sun}/bin/gammarelay-sun";
     notify.sound = "${pkg.notify.sound}/bin/notify-sound";
     notify.micro = "${pkg.notify.micro}/bin/notify-micro";
