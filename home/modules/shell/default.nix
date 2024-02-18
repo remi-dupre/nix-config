@@ -81,6 +81,9 @@ in
     zip # Compressor/archiver for creating and modifying zipfiles
 
     # Programming
+    # cargo-audit # Audit Cargo.lock files for crates with security vulnerabilities
+    cargo-outdated # A cargo subcommand for displaying when Rust dependencie...
+    cargo-udeps # Find unused dependencies in Cargo.toml
     gcc # GNU Compiler Collection (wrapper script)
     gitleaks # Scan git repos (or files) for secrets
     helm-docs # A tool for automatically generating markdown documentation f...
