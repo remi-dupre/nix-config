@@ -20,8 +20,19 @@
     };
 
     extraConfig = {
-      push.autoSetupRemote = true;
+      branch.sort = "-committerdate";
+      column.ui = "auto";
+      commit.verbose = true;
+      diff.algorithm = "histogram";
       init.defaultBranch = "main";
+      merge.conflictstyle = "zdiff3";
+      push.autoSetupRemote = true;
+      rebase.autostash = true;
+
+      rerere = {
+        enabled = true;
+        autoUpdate = true;
+      };
     };
   };
 }
