@@ -56,6 +56,7 @@ in
         loupe # A simple image viewer application written with GTK4 and Rust
         pavucontrol # PulseAudio Volume Control
         qgis # A Free and Open Source Geographic Information System
+        rawtherapee # RAW converter and digital photo processing software
         signal-desktop # Private, simple, and secure messenger
         vlc # Cross-platform media player and streaming server
         wdisplays # A graphical application for configuring displays in Wayl...

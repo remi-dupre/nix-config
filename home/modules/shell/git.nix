@@ -25,9 +25,13 @@
       commit.verbose = true;
       diff.algorithm = "histogram";
       init.defaultBranch = "main";
-      merge.conflictstyle = "zdiff3";
       push.autoSetupRemote = true;
       rebase.autostash = true;
+
+      # merge = {
+      #   conflictstyle = "zdiff3";
+      #   tool = "nvim";
+      # };
 
       rerere = {
         enabled = true;
