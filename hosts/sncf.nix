@@ -5,14 +5,29 @@
     inputs.nixos-wsl.nixosModules.wsl
     inputs.home-manager.nixosModules.home-manager
   ];
- 
+
   wsl = {
     enable = true;
     defaultUser = "remi";
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  environment.systemPackages = [ pkgs.git ];
+
+  environment = {
+    systemPackages = with pkgs; [
+      neovim
+      inputs.pinix.packages.x86_64-linux.pinix
+      # Dev Libraries
+      geos
+      gdal
+      zlib # Lossless data-compression library
+    ];
+
+    variables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.remi = {
@@ -25,6 +40,11 @@
   # Include homemanager config
   home-manager.users.remi = {
     imports = [ ../home ];
+
+    repo = {
+      desktop.enable = false;
+      sway.enable = false;
+    };
   };
 
   programs = {
@@ -40,6 +60,12 @@
     };
   };
 
+  # Docker
+  virtualisation.docker.enable = true;
+
+  # Disabled services
+  systemd.services.docker.wantedBy = lib.mkForce [ ];
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
@@ -48,3 +74,4 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
 }
+

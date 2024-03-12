@@ -254,6 +254,21 @@ in
   # Include homemanager config
   home-manager.users.remi = {
     imports = [ ../../home ];
+
+    repo = {
+      sway.enable = true;
+
+      desktop = {
+        enable = true;
+
+        display = {
+          name = "eDP-1";
+          width = 2560;
+          height = 1600;
+          scale = 1.20;
+        };
+      };
+    };
   };
 
   # Allow unfree packages

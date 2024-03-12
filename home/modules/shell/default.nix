@@ -86,16 +86,14 @@ in
     cargo-udeps # Find unused dependencies in Cargo.toml
     gcc # GNU Compiler Collection (wrapper script)
     gitleaks # Scan git repos (or files) for secrets
+    helm-docs # A tool for automatically generating markdown documentation f...
     openssl # A cryptographic library that implements the SSL and TLS protocols
     pkg-config # A tool that allows packages to find out information about o...
+    pkg-helm # A package manager for kubernetes
     poetry # Python dependency management and packaging made easy
     pre-commit # A framework for managing and maintaining multi-language pre...
     ruff # An extremely fast Python linter
     rustup # The Rust toolchain installer
-
-    # TODO: make optional
-    # helm-docs # A tool for automatically generating markdown documentation f...
-    # pkg-helm # A package manager for kubernetes
 
     # IDE Integration
     nixd # Nix language server

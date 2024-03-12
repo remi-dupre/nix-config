@@ -18,24 +18,9 @@ rec {
   programs.home-manager.enable = true;
   services.mpris-proxy.enable = true;
 
-  repo = {
-    sway.enable = false; # TODO
-
-    desktop = {
-      enable = false; # TODO
-
-      display = {
-        name = "eDP-1";
-        width = 2560;
-        height = 1600;
-        scale = 1.20;
-      };
-    };
-  };
-
   home = {
-    # username = "remi";
-    # homeDirectory = "/home/remi";
+    username = "remi";
+    homeDirectory = "/home/remi";
     keyboard.layout = "fr";
 
     # This value determines the NixOS release from which the default
