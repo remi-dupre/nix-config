@@ -6,7 +6,7 @@ let
   font = import ../../common/fonts.nix inputs;
 in
 
-lib.mkIf config.repo.sway {
+lib.mkIf config.repo.sway.enable {
   services.dunst = {
     enable = true;
 

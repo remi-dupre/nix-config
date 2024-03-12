@@ -5,6 +5,11 @@
     disko.url = github:nix-community/disko;
     pinix.url = github:remi-dupre/pinix;
 
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-on-droid = {
       url = "github:remi-dupre/nix-on-droid/4eac7c468941fb14665a8e2423322a85faf40d8f";
       inputs.nixpkgs.follows = "nixpkgs";

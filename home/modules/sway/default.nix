@@ -23,11 +23,11 @@ in
     };
   };
 
-  home.packages = with pkgs; [
-    wl-gammarelay-rs
-  ];
-
   config = lib.mkIf config.repo.sway.enable {
+    home.packages = with pkgs; [
+      wl-gammarelay-rs
+    ];
+
     wayland.windowManager.sway = {
       enable = true;
       extraConfig = "bindswitch --reload --locked lid:on exec ${action.lock}";
@@ -123,43 +123,6 @@ in
       ];
     };
 
-<<<<<<< HEAD
-  programs.swaylock = {
-    enable = true;
-
-    settings = {
-      image = "${lock-wallpaper}";
-      ignore-empty-password = true;
-    };
-  };
-
-  services.swayidle = {
-    enable = true;
-
-    events = [
-      {
-        event = "before-sleep";
-        command = action.lock;
-      }
-      {
-        event = "after-resume";
-        command = ''swaymsg "output * power on"'';
-      }
-    ];
-
-    timeouts = [
-      {
-        timeout = 1795;
-        command = ''swaymsg "output * power off"'';
-      }
-      {
-        timeout = 1800;
-        command = action.lock;
-      }
-    ];
-  };
-
-=======
     systemd.user.services = {
       gammarelay-sun = {
         Unit.Description = "Control wl-gammarelay-rs depending on sun position.";
@@ -168,5 +131,4 @@ in
       };
     };
   };
->>>>>>> 60b6df6 (add fp3 configuration)
 }
