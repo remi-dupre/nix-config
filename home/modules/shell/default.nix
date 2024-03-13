@@ -96,7 +96,9 @@ in
     rustup # The Rust toolchain installer
 
     # IDE Integration
+    lua-language-server # A language server that offers Lua language support
     nixd # Nix language server
+    nixpkgs-fmt # Nix code formatter for nixpkgs
     ruff-lsp # A Language Server Protocol implementation for Ruff
     yaml-language-server # Language Server for YAML Files
   ];
