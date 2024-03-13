@@ -14,10 +14,6 @@ lib.mkIf config.repo.sway.enable {
     position = "top";
     trayOutput = "none";
 
-    extraConfig = ''
-      output ${cfg-display.name}
-    '';
-
     fonts = {
       names = [ font.compact ];
       size = font.size;
