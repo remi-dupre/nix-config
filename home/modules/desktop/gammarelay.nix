@@ -1,11 +1,12 @@
-{ pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
   bin = import ../../common/binaries.nix inputs;
   script = import ../../common/scripts inputs;
+  cfg = config.repo.desktop;
 in
 
-{
+lib.mkIf cfg.enable {
   home.packages = with pkgs; [
     wl-gammarelay-rs
   ];
