@@ -9,6 +9,11 @@ rec {
     ./python.nix
   ];
 
+  # TODO: see https://github.com/NixOS/nix/security/advisories/GHSA-2ffj-w4mj-pg37
+  nixpkgs.config.permittedInsecurePackages = [
+    "nix-2.16.2"
+  ];
+
   nixpkgs.config.allowUnfree = true;
   programs.home-manager.enable = true;
   services.mpris-proxy.enable = true;

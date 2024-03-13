@@ -3,7 +3,7 @@
 {
   programs.eza = {
     enable = true;
-    enableAliases = true;
+    enableFishIntegration = true;
     git = true;
     icons = true;
     extraOptions = [ "--group-directories-first" ];

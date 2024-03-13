@@ -162,6 +162,43 @@ in
       enable = true;
       alsa.enable = true;
       pulse.enable = true;
+
+      extraConfig.pipewire = {
+        "99-input-denoising.conf" = {
+          source = json.generate "99-input-denoising.conf" {
+            "context.modules" = [
+              {
+                name = "libpipewire-module-echo-cancel";
+
+                args = {
+                  # Monitor mode: Instead of creating a virtual sink into which all
+                  # applications must play, in PipeWire the echo cancellation
+                  # module can read the audio that should be cancelled directly
+                  # from the current fallback audio output
+                  "monitor.mode" = true;
+
+                  # The audio source / microphone wherein the echo should be
+                  # cancelled is not specified explicitely; the module follows the
+                  # fallback audio source setting
+                  "source.props" = {
+                    # Name and description of the virtual source where you get the
+                    # audio without echoed speaker output
+                    "node.name" = "source_ec";
+                    "node.description" = "Echo-cancelled source";
+                  };
+
+                  "aec.args" = {
+                    # Settings for the WebRTC echo cancellation engine
+                    "webrtc.gain_control" = true;
+                    "webrtc.extended_filter" = false;
+                    "webrtc.noise_suppression" = true;
+                  };
+                };
+              }
+            ];
+          };
+        };
+      };
     };
 
     # Session manager
@@ -235,41 +272,6 @@ in
     variables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
-    };
-
-    etc."pipewire/pipewire.conf.d/99-input-denoising.conf" = {
-      source = json.generate "99-input-denoising.conf" {
-        "context.modules" = [
-          {
-            name = "libpipewire-module-echo-cancel";
-
-            args = {
-              # Monitor mode: Instead of creating a virtual sink into which all
-              # applications must play, in PipeWire the echo cancellation
-              # module can read the audio that should be cancelled directly
-              # from the current fallback audio output
-              "monitor.mode" = true;
-
-              # The audio source / microphone wherein the echo should be
-              # cancelled is not specified explicitely; the module follows the
-              # fallback audio source setting
-              "source.props" = {
-                # Name and description of the virtual source where you get the
-                # audio without echoed speaker output
-                "node.name" = "source_ec";
-                "node.description" = "Echo-cancelled source";
-              };
-
-              "aec.args" = {
-                # Settings for the WebRTC echo cancellation engine
-                "webrtc.gain_control" = true;
-                "webrtc.extended_filter" = false;
-                "webrtc.noise_suppression" = true;
-              };
-            };
-          }
-        ];
-      };
     };
   };
 

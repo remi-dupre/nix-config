@@ -96,7 +96,6 @@ in
     rustup # The Rust toolchain installer
 
     # IDE Integration
-    rnix-lsp # A work-in-progress language server for Nix, with syntax check...
     nixd # Nix language server
     ruff-lsp # A Language Server Protocol implementation for Ruff
     yaml-language-server # Language Server for YAML Files
