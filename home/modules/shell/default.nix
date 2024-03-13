@@ -2,12 +2,6 @@
 
 let
   script = (import ../../common/scripts inputs);
-
-  pkg-helm = pkgs.wrapHelm pkgs.kubernetes-helm {
-    plugins = [
-      pkgs.kubernetes-helmPlugins.helm-secrets
-    ];
-  };
 in
 
 {
@@ -85,11 +79,10 @@ in
     cargo-outdated # A cargo subcommand for displaying when Rust dependencie...
     cargo-udeps # Find unused dependencies in Cargo.toml
     gcc # GNU Compiler Collection (wrapper script)
+    git-crypt # Transparent file encryption in git
     gitleaks # Scan git repos (or files) for secrets
-    helm-docs # A tool for automatically generating markdown documentation f...
     openssl # A cryptographic library that implements the SSL and TLS protocols
     pkg-config # A tool that allows packages to find out information about o...
-    pkg-helm # A package manager for kubernetes
     poetry # Python dependency management and packaging made easy
     pre-commit # A framework for managing and maintaining multi-language pre...
     ruff # An extremely fast Python linter

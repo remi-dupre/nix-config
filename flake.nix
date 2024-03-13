@@ -1,8 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
-    home-manager.url = github:nix-community/home-manager;
     disko.url = github:nix-community/disko;
+    home-manager.url = github:nix-community/home-manager;
+    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
     pinix.url = github:remi-dupre/pinix;
 
     nixos-wsl = {

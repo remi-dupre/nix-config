@@ -4,6 +4,7 @@
   imports = [
     inputs.nixos-wsl.nixosModules.wsl
     inputs.home-manager.nixosModules.home-manager
+    ./common/cntml-sncf.nix
   ];
 
   wsl = {
@@ -40,11 +41,7 @@
   # Include homemanager config
   home-manager.users.remi = {
     imports = [ ../home ];
-
-    repo = {
-      desktop.enable = false;
-      sway.enable = false;
-    };
+    repo.work.proxy.enable = true;
   };
 
   programs = {

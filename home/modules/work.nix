@@ -1,38 +1,76 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
+
+let
+  cfg = config.repo.work;
+  ssh-proxy = "ssh-proxy.dgexsol.fr";
+
+  pkg-helm = pkgs.wrapHelm pkgs.kubernetes-helm {
+    plugins = [
+      pkgs.kubernetes-helmPlugins.helm-secrets
+    ];
+  };
+in
 
 {
-  home.packages = with pkgs; [
-    awscli2 # Unified tool to manage your AWS services
-  ];
 
-  programs.ssh = {
-    matchBlocks = {
-      # Networking policy occasionally breaks port 22
-      "github.com" = {
-        hostname = "ssh.github.com";
-        port = 443;
-      };
+  options.repo.work = with lib.types; {
+    proxy.enable = lib.mkOption {
+      default = false;
+      type = bool;
+    };
+  };
 
-      # Networking policy occasionally breaks port 22
-      "gitlab.com" = {
-        hostname = "altssh.gitlab.com";
-        port = 443;
-      };
+  config = {
+    home.packages = with pkgs; [
+      awscli2 # Unified tool to manage your AWS services
+      helm-docs # A tool for automatically generating markdown documentation f...
+      pkg-helm # A package manager for kubernetes
+    ];
 
-      # Proxy used for workspace connexion
-      dgexsol_ssh_proxy = {
-        hostname = "ssh-proxy.dgexsol.fr";
-        port = 443;
-        user = "jumpuser";
-        forwardAgent = true;
-      };
+    programs.ssh = {
+      matchBlocks = {
+        # Networking policy occasionally breaks port 22
+        "github.com" = {
+          hostname = "ssh.github.com";
+          port = 443;
+        };
 
-      # Workspace
-      ws-classic-01 = {
-        hostname = "classic-01.workspaces.dgexsol.fr";
-        user = "9609122y";
-        proxyJump = "dgexsol_ssh_proxy";
-      };
+        # Networking policy occasionally breaks port 22
+        "gitlab.com" = {
+          hostname = "altssh.gitlab.com";
+          port = 443;
+        };
+
+
+        # Workspace
+        ws-classic-01 = {
+          hostname = "classic-01.workspaces.dgexsol.fr";
+          user = "9609122y";
+          proxyJump = ssh-proxy;
+        };
+      } // (
+        if cfg.proxy.enable then {
+          # The SSH proxy through a tunnel provided by cntml
+          "${ssh-proxy}" = {
+            hostname = "127.0.0.1";
+            port = 11443;
+            user = "jumpuser";
+            forwardAgent = true;
+          };
+
+          # Proxy every SSH connexion through dgexsol's proxy
+          "* !ssh-proxy.dgexsol.fr" = {
+            proxyJump = ssh-proxy;
+          };
+        }
+        else {
+          "${ssh-proxy}" = {
+            port = 443;
+            user = "jumpuser";
+            forwardAgent = true;
+          };
+        }
+      );
     };
   };
 }
