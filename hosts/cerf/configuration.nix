@@ -147,6 +147,9 @@ in
     gnome.tracker.enable = true;
     gnome.tracker-miners.enable = true;
 
+    # Enable the local print service
+    printing.enable = true;
+
     # Prevents overheating on Intel CPUs
     thermald.enable = true;
 
