@@ -4,7 +4,8 @@
   imports = [
     inputs.nixos-wsl.nixosModules.wsl
     inputs.home-manager.nixosModules.home-manager
-    ./common/cntml-sncf.nix
+    ./common/sncf-cntml.nix
+    ./common/sncf-certs.nix
   ];
 
   wsl = {
