@@ -1,9 +1,13 @@
 {
   inputs = {
     disko.url = github:nix-community/disko;
-    home-manager.url = github:nix-community/home-manager;
     nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
     pinix.url = github:remi-dupre/pinix;
+
+    home-manager = {
+      url = github:nix-community/home-manager;
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
