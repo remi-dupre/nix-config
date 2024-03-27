@@ -64,6 +64,7 @@ in
         qgis # A Free and Open Source Geographic Information System
         rawtherapee # RAW converter and digital photo processing software
         signal-desktop # Private, simple, and secure messenger
+        teams-for-linux # Unofficial Microsoft Teams client for Linux
         vlc # Cross-platform media player and streaming server
         wdisplays # A graphical application for configuring displays in Wayl...
         wl-gammarelay-rs # A simple program that provides DBus interface to ...
