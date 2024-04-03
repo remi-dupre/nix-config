@@ -4,6 +4,7 @@
   environment.variables = {
     # This should make most Python libraries happy
     REQUESTS_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
+    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
   };
 
   security.pki.certificateFiles = [

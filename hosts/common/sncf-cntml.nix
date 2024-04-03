@@ -32,10 +32,5 @@ in
     '';
   };
 
-  environment.variables = let proxy_url = "http://localhost:3128"; in {
-    HTTP_PROXY = proxy_url;
-    HTTPS_PROXY = proxy_url;
-    http_proxy = proxy_url;
-    https_proxy = proxy_url;
-  };
+  networking.proxy.default = "http://localhost:3128";
 }
