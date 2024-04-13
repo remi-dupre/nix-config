@@ -42,7 +42,10 @@
   # Include homemanager config
   home-manager.users.remi = {
     imports = [ ../home ];
-    repo.work.proxy.enable = true;
+    repo.work = {
+      enable = true;
+      proxy.enable = true;
+    }
   };
 
   programs = {

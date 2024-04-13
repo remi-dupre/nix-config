@@ -14,13 +14,18 @@ in
 {
 
   options.repo.work = with lib.types; {
+    enable = lib.mkOption {
+      default = false;
+      type = bool;
+    };
+
     proxy.enable = lib.mkOption {
       default = false;
       type = bool;
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       awscli2 # Unified tool to manage your AWS services
       helm-docs # A tool for automatically generating markdown documentation f...

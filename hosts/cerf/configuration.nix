@@ -260,6 +260,7 @@ in
 
     repo = {
       sway.enable = true;
+      work.enable = true;
 
       desktop = {
         enable = true;

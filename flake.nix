@@ -20,7 +20,7 @@
     };
   };
 
-  outputs = { nixpkgs, nix-on-droid, ... } @ attrs: {
+  outputs = { nixpkgs, home-manager, nix-on-droid, ... } @ attrs: {
     nixosConfigurations = {
       cerf = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -32,6 +32,13 @@
         system = "x86_64-linux";
         specialArgs = attrs;
         modules = [ ./hosts/sncf.nix ];
+      };
+    };
+
+    homeConfigurations = {
+      deck = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        modules = [ ./hosts/deck.nix ];
       };
     };
 
