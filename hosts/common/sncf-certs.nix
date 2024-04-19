@@ -1,6 +1,10 @@
 { ... }:
 
 {
+  # Required for use in the nix daemon, see
+  # https://nixos.org/manual/nix/stable/installation/env-variables.html?highlight=proxy#nix_ssl_cert_file
+  # ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
+
   environment.variables = {
     # This should make most Python libraries happy
     REQUESTS_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
