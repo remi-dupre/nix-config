@@ -45,7 +45,7 @@
     repo.work = {
       enable = true;
       proxy.enable = true;
-    }
+    };
   };
 
   programs = {
