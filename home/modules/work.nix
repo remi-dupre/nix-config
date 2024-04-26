@@ -29,6 +29,7 @@ in
     home.packages = with pkgs; [
       awscli2 # Unified tool to manage your AWS services
       helm-docs # A tool for automatically generating markdown documentation f...
+      helm-ls #  A nix-shell will temporarily modify your $PATH environment va...
       pkg-helm # A package manager for kubernetes
     ];
 
