@@ -1,4 +1,4 @@
-{ pkgs, ... } @ inputs:
+{ pkgs, ... }:
 
 with pkgs; {
   bash = "${bash}/bin/bash";

@@ -1,6 +1,6 @@
-{ config, pkgs, lib, ... } @ inputs:
+{ ... }:
 
-rec {
+{
   imports = [
     ./modules/desktop
     ./modules/shell

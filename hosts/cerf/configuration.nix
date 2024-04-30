@@ -1,4 +1,4 @@
-{ config, lib, pkgs, system, ... } @ inputs:
+{ lib, pkgs, ... } @ inputs:
 
 let
   json = pkgs.formats.json { };

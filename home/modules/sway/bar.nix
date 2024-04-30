@@ -1,11 +1,9 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, ... } @ inputs:
 
 let
-  action = import ../../common/actions.nix inputs;
   bin = import ../../common/binaries.nix inputs;
   color = import ../../common/colors.nix inputs;
   font = import ../../common/fonts.nix inputs;
-  cfg-display = config.repo.desktop.display;
 in
 
 lib.mkIf config.repo.sway.enable {

@@ -1,10 +1,7 @@
-{ config, git-nautilus-icons, pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   cfg = config.repo.desktop;
-
-  # A nautilus Python extension to overlay icons on files in git repositories
-  git-nautilus-icons.url = github:chrisjbillington/git-nautilus-icons;
 
   nautEnv = pkgs.buildEnv {
     name = "nautilus-env";

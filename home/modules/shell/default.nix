@@ -1,8 +1,4 @@
-{ lib, pkgs, ... } @ inputs:
-
-let
-  script = (import ../../common/scripts inputs);
-in
+{ pkgs, ... }:
 
 {
   imports = [
