@@ -3,25 +3,19 @@
 let
   cfg = config.repo.work;
   ssh-proxy = "ssh-proxy.dgexsol.fr";
-
-  pkg-helm = pkgs.wrapHelm pkgs.kubernetes-helm {
-    plugins = [
-      pkgs.kubernetes-helmPlugins.helm-secrets
-    ];
-  };
 in
 
 {
 
-  options.repo.work = with lib.types; {
+  options.repo.work = {
     enable = lib.mkOption {
       default = false;
-      type = bool;
+      type = lib.types.bool;
     };
 
     proxy.enable = lib.mkOption {
       default = false;
-      type = bool;
+      type = lib.types.bool;
     };
   };
 
@@ -30,7 +24,8 @@ in
       awscli2 # Unified tool to manage your AWS services
       helm-docs # A tool for automatically generating markdown documentation f...
       helm-ls #  A nix-shell will temporarily modify your $PATH environment va...
-      pkg-helm # A package manager for kubernetes
+      kubernetes-helm # A package manager for kubernetes
+      sops # Simple and flexible tool for managing secrets
     ];
 
     programs.ssh = {

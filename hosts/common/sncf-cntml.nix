@@ -31,5 +31,9 @@ in
     '';
   };
 
+  systemd.services.nix-daemon.environment = {
+    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
+  };
+
   networking.proxy.default = "http://localhost:3128";
 }
