@@ -16,13 +16,14 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   environment = {
-    systemPackages = with pkgs; [
+    systemPackages = (with pkgs; [
       neovim
-      inputs.pinix.packages.x86_64-linux.pinix
       # Dev Libraries
       geos
       gdal
       zlib # Lossless data-compression library
+    ]) ++ [
+      inputs.pinix.packages.x86_64-linux.pinix
     ];
 
     variables = {
@@ -50,6 +51,7 @@
 
   programs = {
     fish.enable = true;
+    ssh.startAgent = true;
 
     nix-ld = {
       enable = true;

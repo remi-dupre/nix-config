@@ -10,5 +10,6 @@
     };
   };
 
-  services.ssh-agent.enable = true;
+  # TODO: it appears it doesn't work
+  # services.ssh-agent.enable = true;
 }
