@@ -28,10 +28,9 @@
       push.autoSetupRemote = true;
       rebase.autostash = true;
 
-      # merge = {
-      #   conflictstyle = "zdiff3";
-      #   tool = "nvim";
-      # };
+      # Fix a weird issue for the Gitlab instance of eUL. See
+      # https://stackoverflow.com/a/69891948
+      http.postBuffer = 157286400; # 150 MB
 
       rerere = {
         enabled = true;
