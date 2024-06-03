@@ -8,6 +8,9 @@
     ./common/sncf-certs.nix
   ];
 
+  # Temporary addition of ADB
+  programs.adb.enable = true;
+
   wsl = {
     enable = true;
     defaultUser = "remi";
@@ -36,7 +39,7 @@
   users.users.remi = {
     isNormalUser = true;
     description = "Rémi Dupré";
-    extraGroups = [ "docker" "wheel" ];
+    extraGroups = [ "docker" "wheel" "adbusers" ];
     shell = pkgs.fish;
   };
 
