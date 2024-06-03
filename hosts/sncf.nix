@@ -67,7 +67,13 @@
   };
 
   # Docker
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+
+    # Fix issues where large layers couldn't be downloaded through the VPN
+    # See https://stackoverflow.com/a/76375406
+    daemon.settings.features.containerd-snapshotter = true;
+  };
 
   # Disabled services
   systemd.services.docker.wantedBy = lib.mkForce [ ];
