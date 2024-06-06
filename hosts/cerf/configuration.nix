@@ -107,11 +107,12 @@ in
   users.users.remi = {
     isNormalUser = true;
     description = "Rémi Dupré";
-    extraGroups = [ "docker" "networkmanager" "wheel" "scanner" "lp" ];
+    extraGroups = [ "adbusers" "docker" "networkmanager" "wheel" "scanner" "lp" ];
     shell = pkgs.fish;
   };
 
   programs = {
+    adb.enable = true;
     fish.enable = true;
 
     nix-ld = {
@@ -121,6 +122,12 @@ in
         openssl # A cryptographic library that implements the SSL and TLS protocols
         zlib # Lossless data-compression library
       ];
+    };
+
+    programs.steam = {
+      enable = true;
+      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     };
 
     sway = {
@@ -259,6 +266,7 @@ in
     imports = [ ../../home ];
 
     repo = {
+      games.enable = true;
       sway.enable = true;
       work.enable = true;
 
@@ -280,6 +288,7 @@ in
 
   environment = {
     systemPackages = with pkgs; [
+      appimage-run
       neovim
       inputs.pinix.packages.x86_64-linux.pinix
       # Dev Libraries

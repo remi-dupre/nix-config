@@ -1,4 +1,4 @@
-{ config, lib, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
   bin = import ../../common/binaries.nix inputs;

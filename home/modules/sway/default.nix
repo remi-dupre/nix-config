@@ -74,6 +74,7 @@ in
           criteria = [
             { app_id = "blueman-manager"; }
             { app_id = "pavucontrol"; }
+            { title = "Ankama Launcher"; }
             { title = "Extension:*"; }
             { title = "Firefox Developer Edition — Sharing Indicator"; }
             { title = "Firefox — Sharing Indicator"; }

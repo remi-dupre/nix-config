@@ -6,7 +6,6 @@ let
 in
 
 {
-
   options.repo.work = {
     enable = lib.mkOption {
       default = false;

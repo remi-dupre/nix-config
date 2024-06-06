@@ -5,6 +5,7 @@
     ./modules/desktop
     ./modules/shell
     ./modules/sway
+    ./modules/games.nix
     ./modules/work.nix
     ./python.nix
   ];

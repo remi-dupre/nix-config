@@ -1,4 +1,4 @@
-{ config, lib, ... } @ inputs:
+{ config, lib, pkgs, ... } @ inputs:
 
 let
   action = (import ../../common/actions.nix inputs);
