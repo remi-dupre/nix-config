@@ -85,6 +85,22 @@ in
           hideEdgeBorders = "both";
           border = 1;
           titlebar = false;
+
+          commands = [
+            {
+              # Dofus notifications
+              command = lib.strings.concatStringsSep " ; " [
+                "floating enable"
+                "sticky enable"
+                "move position 10 25"
+              ];
+              criteria = {
+                app_id = "dofus.exe";
+                name = "";
+              };
+            }
+
+          ];
         };
       };
     };
