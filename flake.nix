@@ -1,11 +1,11 @@
 {
   inputs = {
-    disko.url = github:nix-community/disko;
-    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
-    pinix.url = github:remi-dupre/pinix;
+    disko.url = "github:nix-community/disko";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    pinix.url = "github:remi-dupre/pinix";
 
     home-manager = {
-      url = github:nix-community/home-manager;
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

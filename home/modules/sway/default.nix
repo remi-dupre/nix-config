@@ -96,7 +96,6 @@ in
               ];
               criteria = {
                 app_id = "dofus.exe";
-                name = "";
               };
             }
 
