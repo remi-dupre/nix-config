@@ -79,8 +79,12 @@ in
 
   # Network
   networking = {
-    hostName = "cerf"; # Define your hostname.
-    networkmanager.enable = true;
+    hostName = "cerf";
+
+    networkmanager = {
+      enable = true;
+      wifi.powersave = true;
+    };
   };
 
   # Set your time zone.
