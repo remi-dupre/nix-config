@@ -33,6 +33,11 @@ lib.mkIf config.repo.sway.enable {
         text = color.font;
       };
     };
+
+    extraConfig = ''
+      height 28
+    '';
+
   }];
 
   programs.i3status-rust = {

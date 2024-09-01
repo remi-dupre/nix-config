@@ -14,29 +14,29 @@ in
     ./nautilus.nix
   ];
 
-  options.repo.desktop = with lib.types; {
+  options.repo.desktop = {
     enable = lib.mkOption {
       default = false;
-      type = bool;
+      type = lib.types.bool;
     };
 
     display = lib.mkOption {
-      type = submodule {
+      type = lib.types.submodule {
         options = {
           name = lib.mkOption {
-            type = str;
+            type = lib.types.str;
           };
 
           width = lib.mkOption {
-            type = int;
+            type = lib.types.int;
           };
 
           height = lib.mkOption {
-            type = int;
+            type = lib.types.int;
           };
 
           scale = lib.mkOption {
-            type = float;
+            type = lib.types.float;
             default = 1.2;
           };
         };
@@ -46,13 +46,9 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = with pkgs; [
-        # Custom packages
-        font.pkg
-
+      packages = [ font.pkg ] ++ (with pkgs; [
         # Terminal utilities
         xdg-utils # A set of command line tools that assist applications wit...
-
         # Desktop Applications
         evince # GNOME's document viewer
         gimp # The GNU Image Manipulation Program
@@ -68,7 +64,7 @@ in
         vlc # Cross-platform media player and streaming server
         wdisplays # A graphical application for configuring displays in Wayl...
         wl-gammarelay-rs # A simple program that provides DBus interface to ...
-      ];
+      ]);
 
       # Workarround for wayland on electron apps. See
       # https://nixos.wiki/wiki/Wayland
