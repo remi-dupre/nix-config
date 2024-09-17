@@ -183,7 +183,7 @@ lib.mkIf config.repo.sway.enable {
             {
               block = "battery";
               interval = 10;
-              format = "($time)";
+              format = "($time_remaining)";
               full_threshold = 100;
               good = 100;
               info = 75;
