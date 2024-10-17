@@ -27,9 +27,9 @@ lib.mkIf config.repo.sway.enable {
         text = fbri;
       };
 
-      inactiveWorkspace = with color; {
-        background = back;
-        border = back;
+      inactiveWorkspace = {
+        background = color.back;
+        border = color.back;
         text = color.font;
       };
     };
@@ -183,7 +183,7 @@ lib.mkIf config.repo.sway.enable {
             {
               block = "battery";
               interval = 10;
-              format = "($time_remaining)";
+              format = "($time)";
               full_threshold = 100;
               good = 100;
               info = 75;
