@@ -20,6 +20,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      age # Modern encryption tool with small explicit keys
       awscli2 # Unified tool to manage your AWS services
       helm-docs # A tool for automatically generating markdown documentation f...
       helm-ls #  A nix-shell will temporarily modify your $PATH environment va...
