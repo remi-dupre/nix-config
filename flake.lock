@@ -281,11 +281,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1722023427,
-        "narHash": "sha256-SBZWrtkEnLoOcibNMDQQqeOqAY/BuK1wbmt9rMHg1GM=",
+        "lastModified": 1729413544,
+        "narHash": "sha256-H2WePfV+pcIcXkSEGpIBisz99YMMkpzVQoC+XuNy74E=",
         "owner": "remi-dupre",
         "repo": "pinix",
-        "rev": "35fec04ef6d749a6b69a8564fff2c1b911b273c8",
+        "rev": "9cae93a727c0e96cb8220104254b5b82b6151f8f",
         "type": "github"
       },
       "original": {
