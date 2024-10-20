@@ -30,7 +30,7 @@ in
 
     wayland.windowManager.sway = {
       enable = true;
-      extraConfig = "bindswitch --reload --locked lid:on exec ${action.lock}";
+      extraConfig = "bindswitch --reload --locked lid:on exec ${action.lock-nofail}";
 
       wrapperFeatures = {
         base = true;
@@ -119,7 +119,7 @@ in
       events = [
         {
           event = "before-sleep";
-          command = action.lock;
+          command = action.lock-nofail;
         }
         {
           event = "after-resume";
@@ -134,7 +134,7 @@ in
         }
         {
           timeout = 1800;
-          command = action.lock;
+          command = action.lock-nofail;
         }
       ];
     };

@@ -11,6 +11,13 @@ in
     "swaylock"
   ];
 
+  lock-nofail = lib.strings.concatStringsSep " ; " [
+    "sudo -K"
+    "ssh-add -D"
+    "gpgconf --reload gpg-agent"
+    "swaylock"
+  ];
+
   micro = {
     mute = op: "${bin.pactl} set-source-mute @DEFAULT_SOURCE@ ${op}"; # op is toggle / off
     volume = op: "${bin.pactl} set-source-volume @DEFAULT_SOURCE@ ${op}"; # op is +5% / -5%

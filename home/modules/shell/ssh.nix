@@ -11,5 +11,5 @@
   };
 
   # TODO: it appears it doesn't work
-  # services.ssh-agent.enable = true;
+  services.ssh-agent.enable = true;
 }
