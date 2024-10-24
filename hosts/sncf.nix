@@ -16,7 +16,15 @@
     defaultUser = "remi";
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix = {
+    settings.experimental-features = [ "nix-command" "flakes" ];
+
+    gc = {
+      automatic = true;
+      dates = "daily";
+      options = "--delete-older-than 30d";
+    };
+  };
 
   environment = {
     systemPackages = (with pkgs; [
