@@ -71,7 +71,8 @@
     zip # Compressor/archiver for creating and modifying zipfiles
 
     # Programming
-    # cargo-audit # Audit Cargo.lock files for crates with security vulnerabilities
+    cargo-audit # Audit Cargo.lock files for crates with security vulnerabil...
+    cargo-bloat # A tool and Cargo subcommand that helps you find out what t...
     cargo-outdated # A cargo subcommand for displaying when Rust dependencie...
     cargo-tarpaulin # A code coverage tool for Rust projects
     cargo-udeps # Find unused dependencies in Cargo.toml
