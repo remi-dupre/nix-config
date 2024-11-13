@@ -56,6 +56,7 @@ in
         gnome.simple-scan # Simple scanning utility
         libreoffice # Comprehensive, professional-quality productivity suite...
         loupe # A simple image viewer application written with GTK4 and Rust
+        organicmaps # Detailed Offline Maps for Travellers, Tourists, Hikers and Cyclists
         pavucontrol # PulseAudio Volume Control
         qgis # A Free and Open Source Geographic Information System
         rawtherapee # RAW converter and digital photo processing software
