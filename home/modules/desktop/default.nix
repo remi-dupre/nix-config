@@ -51,12 +51,13 @@ in
         xdg-utils # A set of command line tools that assist applications wit...
         # Desktop Applications
         evince # GNOME's document viewer
+        foliate # A simple and modern GTK eBook reader
         gimp # The GNU Image Manipulation Program
         gnome.file-roller # Archive manager for the GNOME desktop environment
         gnome.simple-scan # Simple scanning utility
+        inkscape # Vector graphics editor
         libreoffice # Comprehensive, professional-quality productivity suite...
         loupe # A simple image viewer application written with GTK4 and Rust
-        foliate # A simple and modern GTK eBook reader
         organicmaps # Detailed Offline Maps for Travellers, Tourists, Hikers...
         pavucontrol # PulseAudio Volume Control
         qgis # A Free and Open Source Geographic Information System
