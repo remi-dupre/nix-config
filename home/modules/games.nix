@@ -13,7 +13,7 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       lutris # Open Source gaming platform for GNU/Linux
-      wineWowPackages.waylandFull
+      wineWowPackages.stable # Open Source implementation of the Windows API...
     ];
   };
 }
