@@ -53,8 +53,8 @@ in
         evince # GNOME's document viewer
         foliate # A simple and modern GTK eBook reader
         gimp # The GNU Image Manipulation Program
-        gnome.file-roller # Archive manager for the GNOME desktop environment
-        gnome.simple-scan # Simple scanning utility
+        file-roller # Archive manager for the GNOME desktop environment
+        simple-scan # Simple scanning utility
         inkscape # Vector graphics editor
         libreoffice # Comprehensive, professional-quality productivity suite...
         loupe # A simple image viewer application written with GTK4 and Rust
@@ -75,7 +75,7 @@ in
 
       pointerCursor = {
         name = "Adwaita";
-        package = pkgs.gnome.adwaita-icon-theme;
+        package = pkgs.adwaita-icon-theme;
         size = 16;
 
         x11 = {

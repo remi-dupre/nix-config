@@ -155,8 +155,8 @@ in
 
     # Required by nautilus for indexing files, see
     # https://discourse.nixos.org/t/after-upgrading-to-23-05-gnome-applications-take-a-long-time-to-start/28900
-    gnome.tracker.enable = true;
-    gnome.tracker-miners.enable = true;
+    gnome.tinysparql.enable = true;
+    gnome.localsearch.enable = true;
 
     # Enable the local print service
     printing.enable = true;
