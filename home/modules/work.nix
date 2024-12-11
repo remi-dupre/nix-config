@@ -24,6 +24,8 @@ in
       awscli2 # Unified tool to manage your AWS services
       helm-docs # A tool for automatically generating markdown documentation f...
       helm-ls #  A nix-shell will temporarily modify your $PATH environment va...
+      kubectl # Kubernetes CLI
+      kubectx # Fast way to switch between clusters and namespaces in kubectl!
       kubernetes-helm # A package manager for kubernetes
       sops # Simple and flexible tool for managing secrets
     ];
