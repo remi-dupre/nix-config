@@ -12,5 +12,5 @@ rec {
   default = "NotoSans Nerd Font";
   compact = "NotoSans Nerd Font SemiCondensed";
   monospace = "FiraMono Nerd Font";
-  size = 11.0;
+  size = 13.0;
 }
