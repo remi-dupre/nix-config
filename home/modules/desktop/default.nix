@@ -162,5 +162,8 @@ in
       enable = true;
       package = pkgs.ungoogled-chromium;
     };
+
+    # Whether to enable Syncthing continuous file synchronization
+    services.syncthing.enable = true;
   };
 }

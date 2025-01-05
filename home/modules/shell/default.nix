@@ -64,7 +64,6 @@
     killall # Kill processes by name
     neovim # Vim text editor fork focused on extensibility and agility
     ripgrep # A utility that combines the usability of The Silver Searcher w...
-    syncthing # Open Source Continuous File Synchronization
     unzip # An extraction utility for archives compressed in .zip format
     wl-clipboard # Command-line copy/paste utilities for Wayland
     yq # Command-line YAML/XML/TOML processor - jq wrapper for YAML, XML, TOML
