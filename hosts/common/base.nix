@@ -1,6 +1,37 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
+
+  # System packages
+  environment = {
+    systemPackages = with pkgs; [
+      appimage-run
+      neovim
+      inputs.pinix.packages.x86_64-linux.pinix
+      # Dev Libraries
+      geos
+      gdal
+      zlib # Lossless data-compression library
+    ];
+
+    variables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
+  };
+
+  # Nix
+  nixpkgs.config.allowUnfree = true;
+
+  nix.settings = {
+    auto-optimise-store = true;
+
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
+
   # Docker
   virtualisation.docker.enable = true;
   systemd.services.docker.wantedBy = lib.mkForce [ ]; # disable by default
@@ -35,15 +66,4 @@
     };
   };
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  nix.settings = {
-    auto-optimise-store = true;
-
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-  };
 }

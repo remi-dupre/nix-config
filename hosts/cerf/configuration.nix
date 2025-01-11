@@ -300,26 +300,6 @@ in
     };
   };
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  environment = {
-    systemPackages = with pkgs; [
-      appimage-run
-      neovim
-      inputs.pinix.packages.x86_64-linux.pinix
-      # Dev Libraries
-      geos
-      gdal
-      zlib # Lossless data-compression library
-    ];
-
-    variables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-    };
-  };
-
   # This value determines the NixOS release from which the default settings for
   # stateful data, like file locations and database versions on your system
   # were taken. It‘s perfectly fine and recommended to leave this value at the
