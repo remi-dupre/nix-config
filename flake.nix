@@ -38,13 +38,13 @@
         sncf = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = attrs;
-          modules = [ ./hosts/surface/configuration.nix ];
+          modules = [ ./hosts/sncf.nix ];
         };
 
         surface = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = attrs;
-          modules = [ ./hosts/sncf.nix ];
+          modules = [ ./hosts/surface/configuration.nix ];
         };
       };
 
