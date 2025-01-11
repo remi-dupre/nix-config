@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}@inputs:
 
 {
 
@@ -9,8 +13,8 @@
       neovim
       inputs.pinix.packages.x86_64-linux.pinix
       # Dev Libraries
-      geos
-      gdal
+      geos # C/C++ library for computational geometry with a focus on algori...
+      gdal # Translator library for raster geospatial data formats
       zlib # Lossless data-compression library
     ];
 
