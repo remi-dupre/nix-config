@@ -1,6 +1,7 @@
 {
   inputs = {
     disko.url = "github:nix-community/disko";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     pinix.url = "github:remi-dupre/pinix";
 

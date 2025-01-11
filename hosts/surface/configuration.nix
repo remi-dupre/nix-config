@@ -2,11 +2,12 @@
 
 {
   imports = [
-    inputs.home-manager.nixosModules.home-manager
     inputs.disko.nixosModules.disko
+    inputs.home-manager.nixosModules.home-manager
+    inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
     ../common/base.nix
-    ./hardware-configuration.nix # results of the hardware scan.
     ./disko-partitioning.nix
+    ./hardware-configuration.nix # results of the hardware scan.
   ];
 
   services.xserver.enable = true;
