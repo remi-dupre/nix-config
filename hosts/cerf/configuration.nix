@@ -1,4 +1,4 @@
-{ lib, pkgs, ... } @ inputs:
+{ lib, pkgs, ... }@inputs:
 
 let
   json = pkgs.formats.json { };
@@ -8,16 +8,12 @@ in
   imports = [
     inputs.home-manager.nixosModules.home-manager
     inputs.disko.nixosModules.disko
-    ./hardware-configuration.nix # Include the results of the hardware scan.
+    ../common/base.nix
+    ./hardware-configuration.nix # results of the hardware scan.
     ./disko-partitioning.nix
   ];
 
   zramSwap.enable = true;
-
-  nix.settings = {
-    auto-optimise-store = true;
-    experimental-features = [ "nix-command" "flakes" ];
-  };
 
   hardware = {
     sane.enable = true; # enables support for SANE scanners
@@ -48,7 +44,12 @@ in
     };
 
     packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+      (nerdfonts.override {
+        fonts = [
+          "FiraMono"
+          "Noto"
+        ];
+      })
     ];
   };
 
@@ -57,7 +58,12 @@ in
     rtkit.enable = true; # recommanded with pipewire
 
     pam.loginLimits = [
-      { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+      {
+        domain = "@users";
+        item = "rtprio";
+        type = "-";
+        value = 1;
+      }
     ];
   };
 
@@ -111,7 +117,14 @@ in
   users.users.remi = {
     isNormalUser = true;
     description = "Rémi Dupré";
-    extraGroups = [ "adbusers" "docker" "networkmanager" "wheel" "scanner" "lp" ];
+    extraGroups = [
+      "adbusers"
+      "docker"
+      "networkmanager"
+      "wheel"
+      "scanner"
+      "lp"
+    ];
     shell = pkgs.fish;
   };
 
