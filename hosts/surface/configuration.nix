@@ -10,9 +10,16 @@
     ./hardware-configuration.nix # results of the hardware scan.
   ];
 
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # As the surface hardware configuration may build a patched version of the
+  # Kernel which is not cached, using /tmp might result in memory shortage
+  # while building configuration.
+  environment.variables.TMPDIR = "/var/tmp";
+
+  services.xserver = {
+    enable = true;
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
+  };
 
   zramSwap.enable = true;
 
@@ -27,31 +34,6 @@
       # https://nixos.wiki/wiki/Bluetooth#Showing_battery_charge_of_bluetooth_devices
       settings.General.Experimental = true;
     };
-
-    tuxedo-rs = {
-      enable = true;
-      tailor-gui.enable = true;
-    };
-  };
-
-  fonts = {
-    fontconfig = {
-      enable = true;
-
-      defaultFonts = {
-        serif = [ "NotoSerif Nerd Font" ];
-        sansSerif = [ "NotoSans Nerd Font" ];
-      };
-    };
-
-    packages = with pkgs; [
-      (nerdfonts.override {
-        fonts = [
-          "FiraMono"
-          "Noto"
-        ];
-      })
-    ];
   };
 
   # Network
