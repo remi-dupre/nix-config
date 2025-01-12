@@ -19,6 +19,7 @@
     enable = true;
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
+    wacom.enable = true;
   };
 
   zramSwap.enable = true;
