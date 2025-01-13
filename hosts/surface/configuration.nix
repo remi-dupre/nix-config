@@ -13,13 +13,56 @@
   # As the surface hardware configuration may build a patched version of the
   # Kernel which is not cached, using /tmp might result in memory shortage
   # while building configuration.
-  environment.variables.TMPDIR = "/var/tmp";
+  environment = {
+    variables.TMPDIR = "/var/tmp";
 
-  services.xserver = {
-    enable = true;
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
-    wacom.enable = true;
+    gnome.excludePackages = with pkgs; [
+      baobab # Graphical application to analyse disk usage in any GNOME envir...
+      epiphany # WebKit based web browser for GNOME
+      geary # Mail client for GNOME 3
+      gnome-backgrounds # Default wallpaper set for GNOME
+      gnome-characters # Simple utility application to find and insert unusua...
+      gnome-connections # Remote desktop client for the GNOME desktop environ...
+      gnome-contacts # GNOME’s integrated address book
+      gnome-disk-utility # Udisks graphical front-end
+      gnome-extension-manager # Desktop app for managing GNOME shell extensions
+      gnome-font-viewer # Program that can preview fonts and create thumbnail...
+      gnome-logs # Log viewer for the systemd journal
+      gnome-music # Music player and management application for the GNOME des...
+      gnome-shell-extensions # Modify and extend GNOME Shell functionality an...
+      gnome-software # Software store that lets you install and update applic...
+      gnome-system-monitor # System Monitor shows you what programs are runni...
+      gnome-tour # GNOME Greeter & Tour
+      gnome-user-docs # User and system administration help for the GNOME des...
+      orca # A free, open source, flexible and extensible screen reader that ...
+      seahorse # Application for managing encryption keys and passwords in th...
+      snapshot # Take pictures and videos on your computer, tablet, or phone ...
+      sushi # Quick previewer for Nautilus
+      sysprof # System-wide profiler for Linux
+      totem # Movie player for the GNOME desktop based on GStreamer
+      yelp # Help viewer in Gnome
+    ];
+  };
+
+  services = {
+    flatpak.enable = true;
+
+    beesd.filesystems.root = {
+      spec = "/";
+      verbosity = "crit";
+
+      extraOptions = [
+        "--thread-count"
+        "1"
+      ];
+    };
+
+    xserver = {
+      enable = true;
+      displayManager.gdm.enable = true;
+      desktopManager.gnome.enable = true;
+      wacom.enable = true;
+    };
   };
 
   zramSwap.enable = true;
@@ -102,6 +145,9 @@
       };
     };
   };
+
+  # Init after install with `sudo waydroid init -f`
+  virtualisation.waydroid.enable = true;
 
   # This value determines the NixOS release from which the default settings for
   # stateful data, like file locations and database versions on your system

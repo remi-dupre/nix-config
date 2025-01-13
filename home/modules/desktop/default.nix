@@ -66,7 +66,6 @@ in
           krita # Free and open source painting application
           libreoffice # Comprehensive, professional-quality productivity suit...
           loupe # A simple image viewer application written with GTK4 and Rus
-          organicmaps # Detailed Offline Maps for Travellers, Tourists, Hiker...
           pavucontrol # PulseAudio Volume Control
           qgis # A Free and Open Source Geographic Information System
           rawtherapee # RAW converter and digital photo processing software
