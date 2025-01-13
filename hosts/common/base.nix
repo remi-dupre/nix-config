@@ -5,7 +5,6 @@
 }@inputs:
 
 {
-
   # System packages
   environment = {
     systemPackages = with pkgs; [
@@ -35,6 +34,9 @@
       "flakes"
     ];
   };
+
+  # Override existing files from home
+  home-manager.backupFileExtension = "backup";
 
   # Docker
   virtualisation.docker.enable = true;
