@@ -13,6 +13,7 @@ in
 
 {
   imports = [
+    ./gnome/default.nix
     ./foot.nix
     ./gammarelay.nix
     ./gtk.nix
@@ -50,59 +51,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # TODO: GNOME CONFIG MODULE
-    dconf = {
-      enable = true;
-
-      settings = {
-        "org/gnome/desktop/sound".allow-volume-above-100-percent = true;
-        "org/gnome/desktop/a11y/applications".screen-keyboard-enabled = true;
-        "org/gnome/desktop/interface".toolkit-accessibility = true;
-
-        "org/gnome/shell" = {
-          disable-user-extensions = false; # enables user extensions
-        };
-
-        "org/gnome/desktop/background" = {
-          picture-uri = "${../../static/wallpaper.jpg}";
-          picture-uri-dark = "${../../static/wallpaper.jpg}";
-        };
-
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark"; # gtk 4
-          font-name = "${font.default} ${toString font.size}";
-        };
-
-        "org/gnome/desktop/interface" = {
-          enable-hot-corners = true;
-          edge-tiling = true;
-        };
-
-        "org/gnome/mutter" = {
-          dynamic-workspaces = true;
-          workspaces-only-on-primary = true;
-          experimental-features = [ "scale-monitor-framebuffer" ];
-        };
-
-        "org/gnome/desktop/a11y/mouse" = {
-          secondary-click-enabled = true;
-          secondary-click-time = 1.2;
-        };
-      };
-    };
-
-    programs.gnome-shell.enable = true;
-    programs.gnome-shell.extensions = [
-      # Need version 31
-      # { package = pkgs.gnomeExtensions.gjs-osk; }
-    ];
-
     home = {
       packages =
         [ font.pkg ]
         ++ (with pkgs; [
           # Terminal utilities
-          xdg-utils # A set of command line tools that assist applications wit...
+          xdg-utils # A set of command line tools that assist applications wi...
           # Desktop Applications
           evince # GNOME's document viewer
           file-roller # Archive manager for the GNOME desktop environment
@@ -110,17 +64,17 @@ in
           gimp # The GNU Image Manipulation Program
           inkscape # Vector graphics editor
           krita # Free and open source painting application
-          libreoffice # Comprehensive, professional-quality productivity suite...
-          loupe # A simple image viewer application written with GTK4 and Rust
-          organicmaps # Detailed Offline Maps for Travellers, Tourists, Hikers...
+          libreoffice # Comprehensive, professional-quality productivity suit...
+          loupe # A simple image viewer application written with GTK4 and Rus
+          organicmaps # Detailed Offline Maps for Travellers, Tourists, Hiker...
           pavucontrol # PulseAudio Volume Control
           qgis # A Free and Open Source Geographic Information System
           rawtherapee # RAW converter and digital photo processing software
           signal-desktop # Private, simple, and secure messenger
           simple-scan # Simple scanning utility
           vlc # Cross-platform media player and streaming server
-          wdisplays # A graphical application for configuring displays in Wayl...
-          wl-gammarelay-rs # A simple program that provides DBus interface to ...
+          wdisplays # A graphical application for configuring displays in Way...
+          wl-gammarelay-rs # A simple program that provides DBus interface to...
         ]);
 
       # Workarround for wayland on electron apps. See
@@ -139,9 +93,7 @@ in
       };
 
       file = {
-        # TODO: gnome-specific
-        ".local/share/gnome-shell/extensions".source = ../static/gnome-extensions;
-        # TODO: this is sway-specific
+        # TODO: sway-specific
         ".config/rofi".source = ../../static/config/rofi;
       };
     };

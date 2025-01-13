@@ -91,6 +91,7 @@
 
       desktop = {
         enable = true;
+        gnome.enable = true;
 
         display = {
           name = "eDP-1";
