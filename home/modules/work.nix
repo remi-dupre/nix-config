@@ -19,16 +19,20 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      age # Modern encryption tool with small explicit keys
-      awscli2 # Unified tool to manage your AWS services
-      helm-docs # A tool for automatically generating markdown documentation f...
-      helm-ls #  A nix-shell will temporarily modify your $PATH environment va...
-      kubectl # Kubernetes CLI
-      kubectx # Fast way to switch between clusters and namespaces in kubectl!
-      kubernetes-helm # A package manager for kubernetes
-      sops # Simple and flexible tool for managing secrets
-    ];
+    shellAliases.k = "kubectl";
+
+    home={
+      packages = with pkgs; [
+        age # Modern encryption tool with small explicit keys
+        awscli2 # Unified tool to manage your AWS services
+        helm-docs # A tool for automatically generating markdown documentation f...
+        helm-ls #  A nix-shell will temporarily modify your $PATH environment va...
+        kubectl # Kubernetes CLI
+        kubectx # Fast way to switch between clusters and namespaces in kubectl!
+        kubernetes-helm # A package manager for kubernetes
+        sops # Simple and flexible tool for managing secrets
+      ];
+    };
 
     programs.ssh = {
       matchBlocks = {
