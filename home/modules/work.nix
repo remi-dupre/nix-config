@@ -19,9 +19,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    shellAliases.k = "kubectl";
+    home = {
+      shellAliases.k = "kubectl";
 
-    home={
       packages = with pkgs; [
         age # Modern encryption tool with small explicit keys
         awscli2 # Unified tool to manage your AWS services
