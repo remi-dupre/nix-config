@@ -60,16 +60,16 @@ in
           gimp # The GNU Image Manipulation Program
           inkscape # Vector graphics editor
           krita # Free and open source painting application
-          libreoffice # Comprehensive, professional-quality productivity suit...
-          loupe # A simple image viewer application written with GTK4 and Rus
+          libreoffice # Comprehensive, professional-quality productivity suite...
+          loupe # A simple image viewer application written with GTK4 and Rust
           pavucontrol # PulseAudio Volume Control
           qgis # A Free and Open Source Geographic Information System
           rawtherapee # RAW converter and digital photo processing software
           signal-desktop # Private, simple, and secure messenger
           simple-scan # Simple scanning utility
           vlc # Cross-platform media player and streaming server
-          wdisplays # A graphical application for configuring displays in Way...
-          wl-gammarelay-rs # A simple program that provides DBus interface to...
+          wdisplays # A graphical application for configuring displays in Wayl...
+          wl-gammarelay-rs # A simple program that provides DBus interface to ...
         ]);
 
       # Workarround for wayland on electron apps. See
