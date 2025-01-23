@@ -23,10 +23,11 @@ in
       enable = true;
 
       settings = {
-        "org/gnome/desktop/sound".allow-volume-above-100-percent = true;
+        "io/missioncenter/MissionCenter".performance-page-network-use-bytes = true;
         "org/gnome/desktop/a11y/applications".screen-keyboard-enabled = true;
         "org/gnome/desktop/interface".toolkit-accessibility = true;
-        "io/missioncenter/MissionCenter".performance-page-network-use-bytes = true;
+        "org/gnome/desktop/sound".allow-volume-above-100-percent = true;
+        "org/gnome/shell/app-switcher".current-workspace-only = true;
 
         "org/gnome/shell" = {
           disable-user-extensions = false;
@@ -42,6 +43,7 @@ in
 
           favorite-apps = [
             "firefox-devedition.desktop"
+            "com.raggesilver.BlackBox.desktop"
             "org.gnome.Console.desktop"
             "org.gnome.Nautilus.desktop"
             "signal-desktop.desktop"
@@ -111,6 +113,147 @@ in
           snap-spacing-px = 45;
         };
 
+        "org/gnome/shell/extensions/quick-settings-tweaks" = {
+          add-dnd-quick-toggle-enabled = false;
+          add-unsafe-quick-toggle-enabled = false;
+          datemenu-remove-media-control = false;
+          datemenu-remove-notifications = false;
+          input-always-show = false;
+          input-show-selected = false;
+          media-control-compact-mode = true;
+          media-control-enabled = false;
+          notifications-enabled = false;
+          output-show-selected = false;
+          volume-mixer-position = "bottom";
+          volume-mixer-show-description = true;
+          volume-mixer-show-icon = true;
+
+          user-removed-buttons = [
+            "KeyboardMenuToggle"
+            "DarkModeToggle"
+            "RfkillToggle"
+          ];
+
+          list-buttons = builtins.toJSON [
+            {
+              name = "SystemItem";
+              title = null;
+              visible = true;
+            }
+            {
+              name = "OutputStreamSlider";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "InputStreamSlider";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "St_BoxLayout";
+              title = null;
+              visible = true;
+            }
+            {
+              name = "BrightnessItem";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "NMWiredToggle";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "NMWirelessToggle";
+              title = "Wi-Fi";
+              visible = true;
+            }
+            {
+              name = "NMModemToggle";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "NMBluetoothToggle";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "NMVpnToggle";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "BluetoothToggle";
+              title = "Bluetooth";
+              visible = true;
+            }
+            {
+              name = "PowerProfilesToggle";
+              title = "Power Mode";
+              visible = true;
+            }
+            {
+              name = "NightLightToggle";
+              title = "Night Light";
+              visible = true;
+            }
+            {
+              name = "DarkModeToggle";
+              title = "Dark Style";
+              visible = true;
+            }
+            {
+              name = "KeyboardBrightnessToggle";
+              title = "Keyboard";
+              visible = false;
+            }
+            {
+              name = "RfkillToggle";
+              title = "Airplane Mode";
+              visible = true;
+            }
+            {
+              name = "RotationToggle";
+              title = "Auto Rotate";
+              visible = true;
+            }
+            {
+              name = "KeyboardMenuToggle";
+              title = "Screen Keyboard";
+              visible = true;
+            }
+            {
+              name = "CaffeineToggle";
+              title = "Caffeine";
+              visible = true;
+            }
+            {
+              name = "DndQuickToggle";
+              title = "Do Not Disturb";
+              visible = true;
+            }
+            {
+              name = "BackgroundAppsToggle";
+              title = "No Background Apps";
+              visible = false;
+            }
+            {
+              name = "MediaSection";
+              title = null;
+              visible = false;
+            }
+            {
+              name = "Notifications";
+              title = null;
+              visible = true;
+            }
+          ];
+
+        };
+
         "org/gnome/shell/extensions/unite" = {
           enable-titlebar-actions = true;
           extend-left-box = false;
@@ -136,6 +279,7 @@ in
     };
 
     home.packages = with pkgs; [
+      blackbox-terminal # Beautiful GTK 4 terminal
       flatpak # Linux application sandboxing and distribution framework
       gnome-software # Software store that lets you install and update applic...
       mission-center # Monitor your CPU, Memory, Disk, Network and GPU usage
@@ -149,6 +293,8 @@ in
         extensions = with pkgs.gnomeExtensions; [
           { package = always-show-titles-in-overview; }
           { package = auto-activities; }
+          { package = caffeine; }
+          { package = quick-settings-tweaker; }
           { package = screen-rotate; }
           { package = unite; }
           # Need version 31

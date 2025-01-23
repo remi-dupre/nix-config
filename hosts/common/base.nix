@@ -36,7 +36,7 @@
   };
 
   # Override existing files from home
-  home-manager.backupFileExtension = "backup";
+  home-manager.backupFileExtension = "hm-backup";
 
   # Docker
   virtualisation.docker.enable = true;

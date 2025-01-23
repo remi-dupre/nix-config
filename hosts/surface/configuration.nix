@@ -14,7 +14,9 @@
   # Kernel which is not cached, using /tmp might result in memory shortage
   # while building configuration.
   environment = {
-    variables.TMPDIR = "/var/tmp";
+    # systemPackages = with pkgs; [
+    #   libwacom-surface # Libraries, configuration, and diagnostic tools for W...
+    # ];
 
     gnome.excludePackages = with pkgs; [
       baobab # Graphical application to analyse disk usage in any GNOME envir...
@@ -23,6 +25,7 @@
       gnome-backgrounds # Default wallpaper set for GNOME
       gnome-characters # Simple utility application to find and insert unusua...
       gnome-connections # Remote desktop client for the GNOME desktop environ...
+      gnome-console # Simple user-friendly terminal emulator for the GNOME de...
       gnome-contacts # GNOME’s integrated address book
       gnome-disk-utility # Udisks graphical front-end
       gnome-extension-manager # Desktop app for managing GNOME shell extensions
@@ -32,6 +35,7 @@
       gnome-shell-extensions # Modify and extend GNOME Shell functionality an...
       gnome-software # Software store that lets you install and update applic...
       gnome-system-monitor # System Monitor shows you what programs are runni...
+      gnome-terminal # GNOME Terminal Emulator
       gnome-tour # GNOME Greeter & Tour
       gnome-user-docs # User and system administration help for the GNOME des...
       orca # A free, open source, flexible and extensible screen reader that ...
@@ -47,15 +51,15 @@
   services = {
     flatpak.enable = true;
 
-    beesd.filesystems.root = {
-      spec = "/";
-      verbosity = "crit";
-
-      extraOptions = [
-        "--thread-count"
-        "1"
-      ];
-    };
+    # beesd.filesystems.root = {
+    #   spec = "/";
+    #   verbosity = "crit";
+    #
+    #   extraOptions = [
+    #     "--thread-count"
+    #     "1"
+    #   ];
+    # };
 
     xserver = {
       enable = true;
@@ -120,6 +124,12 @@
     sway = {
       enable = true;
       extraPackages = [ ];
+    };
+
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     };
   };
 

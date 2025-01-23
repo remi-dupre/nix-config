@@ -267,7 +267,6 @@ in
         DEVICES_TO_DISABLE_ON_WIFI_CONNECT = "wwan";
         DEVICES_TO_DISABLE_ON_WWAN_CONNECT = "wifi";
       };
-
     };
   };
 
