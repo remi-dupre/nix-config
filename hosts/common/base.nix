@@ -71,5 +71,4 @@
       LC_TIME = "fr_FR.UTF-8";
     };
   };
-
 }

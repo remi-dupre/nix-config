@@ -6,6 +6,7 @@
     inputs.home-manager.nixosModules.home-manager
     inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
     ../common/base.nix
+    ../common/nextdns.nix
     ./disko-partitioning.nix
     ./hardware-configuration.nix # results of the hardware scan.
   ];
@@ -50,6 +51,7 @@
 
   services = {
     flatpak.enable = true;
+    nextdns.enable = true; # TODO: common?
 
     # beesd.filesystems.root = {
     #   spec = "/";
@@ -87,6 +89,12 @@
   # Network
   networking = {
     hostName = "surface";
+
+    # # TODO: common?
+    # nameservers = [
+    #   "45.90.28.25" # NextDNS
+    #   "45.90.30.25" # NextDNS
+    # ];
 
     networkmanager = {
       enable = true;

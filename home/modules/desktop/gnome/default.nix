@@ -23,6 +23,7 @@ in
       enable = true;
 
       settings = {
+        "com/raggesilver/BlackBox".working-directory-mode = 1;
         "io/missioncenter/MissionCenter".performance-page-network-use-bytes = true;
         "org/gnome/desktop/a11y/applications".screen-keyboard-enabled = true;
         "org/gnome/desktop/interface".toolkit-accessibility = true;
