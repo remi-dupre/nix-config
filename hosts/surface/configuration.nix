@@ -5,11 +5,13 @@
     inputs.disko.nixosModules.disko
     inputs.home-manager.nixosModules.home-manager
     inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
-    ../common/base.nix
+    ../common
     ../common/nextdns.nix
     ./disko-partitioning.nix
     ./hardware-configuration.nix # results of the hardware scan.
   ];
+
+  common.deviceName = "surface";
 
   # As the surface hardware configuration may build a patched version of the
   # Kernel which is not cached, using /tmp might result in memory shortage
@@ -87,19 +89,9 @@
   };
 
   # Network
-  networking = {
-    hostName = "surface";
-
-    # # TODO: common?
-    # nameservers = [
-    #   "45.90.28.25" # NextDNS
-    #   "45.90.30.25" # NextDNS
-    # ];
-
-    networkmanager = {
-      enable = true;
-      wifi.powersave = true;
-    };
+  networking.networkmanager = {
+    enable = true;
+    wifi.powersave = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

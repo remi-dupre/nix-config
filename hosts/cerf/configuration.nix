@@ -8,11 +8,12 @@ in
   imports = [
     inputs.home-manager.nixosModules.home-manager
     inputs.disko.nixosModules.disko
-    ../common/base.nix
+    ../common
     ./hardware-configuration.nix # results of the hardware scan.
     ./disko-partitioning.nix
   ];
 
+  common.deviceName = "cerf";
   zramSwap.enable = true;
 
   hardware = {
@@ -84,13 +85,9 @@ in
   };
 
   # Network
-  networking = {
-    hostName = "cerf";
-
-    networkmanager = {
-      enable = true;
-      wifi.powersave = true;
-    };
+  networking.networkmanager = {
+    enable = true;
+    wifi.powersave = true;
   };
 
   # Set your time zone.
