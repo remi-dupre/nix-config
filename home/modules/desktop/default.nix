@@ -8,7 +8,8 @@ in
 
 {
   imports = [
-    ./gnome/default.nix
+    ./gnome
+    ./sway
     ./foot.nix
     ./gammarelay.nix
     ./gtk.nix

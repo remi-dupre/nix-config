@@ -6,10 +6,6 @@ let
 in
 
 {
-
-
-
-
   options.common.nextdns = with lib.types; {
     enable = lib.mkOption {
       default = false;

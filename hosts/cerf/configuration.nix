@@ -280,11 +280,11 @@ in
 
     repo = {
       games.enable = true;
-      sway.enable = true;
       work.enable = true;
 
       desktop = {
         enable = true;
+        sway.enable = true;
 
         display = {
           name = "eDP-1";

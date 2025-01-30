@@ -53,8 +53,9 @@
 
   services = {
     flatpak.enable = true;
-    nextdns.enable = true; # TODO: common?
 
+    # TODO: while this is great, it uses a lot of RAM and should only be
+    # running on power.
     # beesd.filesystems.root = {
     #   spec = "/";
     #   verbosity = "crit";
@@ -139,11 +140,11 @@
 
     repo = {
       games.enable = true;
-      sway.enable = true;
       work.enable = true;
 
       desktop = {
         enable = true;
+        sway.enable = true;
         gnome.enable = true;
 
         display = {
