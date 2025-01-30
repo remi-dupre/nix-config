@@ -16,6 +16,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      appimage-run
       wineWowPackages.stable # Open Source implementation of the Windows API...
     ];
 

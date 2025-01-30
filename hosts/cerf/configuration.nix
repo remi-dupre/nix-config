@@ -13,7 +13,7 @@ in
     ./disko-partitioning.nix
   ];
 
-  common.deviceName = "cerf";
+  repo.common.deviceName = "cerf";
   zramSwap.enable = true;
 
   hardware = {
@@ -90,41 +90,6 @@ in
     wifi.powersave = true;
   };
 
-  # Set your time zone.
-  time.timeZone = "Europe/Paris";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "fr_FR.UTF-8";
-    LC_IDENTIFICATION = "fr_FR.UTF-8";
-    LC_MEASUREMENT = "fr_FR.UTF-8";
-    LC_MONETARY = "fr_FR.UTF-8";
-    LC_NAME = "fr_FR.UTF-8";
-    LC_NUMERIC = "fr_FR.UTF-8";
-    LC_PAPER = "fr_FR.UTF-8";
-    LC_TELEPHONE = "fr_FR.UTF-8";
-    LC_TIME = "fr_FR.UTF-8";
-  };
-
-  console.keyMap = "fr";
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.remi = {
-    isNormalUser = true;
-    description = "Rémi Dupré";
-    extraGroups = [
-      "adbusers"
-      "docker"
-      "networkmanager"
-      "wheel"
-      "scanner"
-      "lp"
-    ];
-    shell = pkgs.fish;
-  };
-
   programs = {
     adb.enable = true;
     fish.enable = true;
@@ -156,9 +121,6 @@ in
 
     # Required by xdg portal
     dbus.enable = true;
-
-    # VPN capabilities
-    globalprotect.enable = true;
 
     # Required by nautilus for trash management
     gvfs.enable = true;

@@ -1,31 +1,45 @@
-{ config
-, lib
-, pkgs
-, ...
-}@inputs:
+{ config, lib, pkgs, pinix, ... }:
 
 let
-  cfg = config.common;
+  cfg = config.repo.common;
 in
 
 {
   imports = [
+    ./gnome.nix
     ./nextdns.nix
   ];
 
-  options.common.deviceName = lib.mkOption {
-    type = lib.types.str;
+  options.repo.common = with lib; {
+    deviceName = mkOption {
+      type = types.str;
+    };
   };
 
   config = {
     networking.hostName = cfg.deviceName;
 
+    # Define a user account. Don't forget to set a password with ‘passwd’.
+    users.users.remi = {
+      isNormalUser = true;
+      description = "Rémi Dupré";
+      shell = pkgs.fish;
+
+      extraGroups = [
+        "adbusers"
+        "docker"
+        "networkmanager"
+        "wheel"
+        "scanner"
+        "lp"
+      ];
+    };
+
     # System packages
     environment = {
       systemPackages = with pkgs; [
-        appimage-run
         neovim
-        inputs.pinix.packages.x86_64-linux.pinix
+        pinix.packages.x86_64-linux.pinix
         # Dev Libraries
         geos # C/C++ library for computational geometry with a focus on algori...
         gdal # Translator library for raster geospatial data formats

@@ -1,12 +1,12 @@
 { config, lib, ... }:
 
 let
-  cfg = config.common;
+  cfg = config.repo.common;
   secrets = import ./secrets.nix;
 in
 
 {
-  options.common.nextdns = with lib.types; {
+  options.repo.common.nextdns = with lib.types; {
     enable = lib.mkOption {
       default = false;
       type = bool;
