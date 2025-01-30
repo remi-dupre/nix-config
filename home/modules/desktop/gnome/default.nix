@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.repo.desktop.gnome;
@@ -18,7 +23,6 @@ in
       enable = true;
 
       settings = {
-        "com/raggesilver/BlackBox".working-directory-mode = 1;
         "io/missioncenter/MissionCenter".performance-page-network-use-bytes = true;
         "org/gnome/desktop/a11y/applications".screen-keyboard-enabled = true;
         "org/gnome/desktop/interface".toolkit-accessibility = true;
@@ -78,6 +82,11 @@ in
         };
 
         # Extension settings
+
+        "com/raggesilver/BlackBox" = {
+          working-directory-mode = 1;
+          font = "${font.monospace} ${toString font.size}";
+        };
 
         "org/gnome/shell/extensions/gjsosk" = {
           background-a = 1.0;
