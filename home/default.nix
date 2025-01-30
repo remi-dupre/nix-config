@@ -4,15 +4,9 @@
   imports = [
     ./modules/desktop
     ./modules/shell
-    ./modules/sway
     ./modules/games.nix
     ./modules/work.nix
     ./python.nix
-  ];
-
-  # TODO: see https://github.com/NixOS/nix/security/advisories/GHSA-2ffj-w4mj-pg37
-  nixpkgs.config.permittedInsecurePackages = [
-    "nix-2.16.2"
   ];
 
   nixpkgs.config.allowUnfree = true;

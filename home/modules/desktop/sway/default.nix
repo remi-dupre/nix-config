@@ -1,11 +1,11 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... }:
 
 let
   lock-wallpaper = "~/.lock-wallpaper.png";
-  action = import ../../common/actions.nix inputs;
-  bin = import ../../common/binaries.nix inputs;
-  font = import ../../common/fonts.nix inputs;
-  script = import ../../common/scripts inputs;
+  action = import ../../../common/actions.nix { inherit lib; inherit pkgs; };
+  bin = import ../../../common/binaries.nix pkgs;
+  font = import ../../../common/fonts.nix pkgs;
+  script = import ../../../common/scripts pkgs;
   cfg-display = config.repo.desktop.display;
 in
 
@@ -16,14 +16,14 @@ in
     ./keybindings.nix
   ];
 
-  options.repo.sway = with lib.types; {
+  options.repo.desktop.sway = with lib.types; {
     enable = lib.mkOption {
       default = false;
       type = bool;
     };
   };
 
-  config = lib.mkIf config.repo.sway.enable {
+  config = lib.mkIf config.repo.desktop.sway.enable {
     home.packages = with pkgs; [
       wl-gammarelay-rs
     ];
@@ -66,7 +66,7 @@ in
         output = {
           "*" = {
             scale = toString cfg-display.scale;
-            bg = "${../../static/wallpaper.jpg} fill";
+            bg = "${../../../static/wallpaper.jpg} fill";
           };
         };
 

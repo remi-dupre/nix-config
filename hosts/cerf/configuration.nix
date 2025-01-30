@@ -1,4 +1,4 @@
-{ lib, pkgs, ... } @ inputs:
+{ lib, pkgs, ... }@inputs:
 
 let
   json = pkgs.formats.json { };
@@ -8,16 +8,17 @@ in
   imports = [
     inputs.home-manager.nixosModules.home-manager
     inputs.disko.nixosModules.disko
-    ./hardware-configuration.nix # Include the results of the hardware scan.
+    ../common
+    ./hardware-configuration.nix # results of the hardware scan.
     ./disko-partitioning.nix
   ];
 
-  zramSwap.enable = true;
-
-  nix.settings = {
-    auto-optimise-store = true;
-    experimental-features = [ "nix-command" "flakes" ];
+  repo.common = {
+    deviceName = "cerf";
+    nextdns.enable = true;
   };
+
+  zramSwap.enable = true;
 
   hardware = {
     sane.enable = true; # enables support for SANE scanners
@@ -48,7 +49,12 @@ in
     };
 
     packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "FiraMono" "Noto" ]; })
+      (nerdfonts.override {
+        fonts = [
+          "FiraMono"
+          "Noto"
+        ];
+      })
     ];
   };
 
@@ -57,7 +63,12 @@ in
     rtkit.enable = true; # recommanded with pipewire
 
     pam.loginLimits = [
-      { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+      {
+        domain = "@users";
+        item = "rtprio";
+        type = "-";
+        value = 1;
+      }
     ];
   };
 
@@ -78,41 +89,9 @@ in
   };
 
   # Network
-  networking = {
-    hostName = "cerf";
-
-    networkmanager = {
-      enable = true;
-      wifi.powersave = true;
-    };
-  };
-
-  # Set your time zone.
-  time.timeZone = "Europe/Paris";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "fr_FR.UTF-8";
-    LC_IDENTIFICATION = "fr_FR.UTF-8";
-    LC_MEASUREMENT = "fr_FR.UTF-8";
-    LC_MONETARY = "fr_FR.UTF-8";
-    LC_NAME = "fr_FR.UTF-8";
-    LC_NUMERIC = "fr_FR.UTF-8";
-    LC_PAPER = "fr_FR.UTF-8";
-    LC_TELEPHONE = "fr_FR.UTF-8";
-    LC_TIME = "fr_FR.UTF-8";
-  };
-
-  console.keyMap = "fr";
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.remi = {
-    isNormalUser = true;
-    description = "Rémi Dupré";
-    extraGroups = [ "adbusers" "docker" "networkmanager" "wheel" "scanner" "lp" ];
-    shell = pkgs.fish;
+  networking.networkmanager = {
+    enable = true;
+    wifi.powersave = true;
   };
 
   programs = {
@@ -146,9 +125,6 @@ in
 
     # Required by xdg portal
     dbus.enable = true;
-
-    # VPN capabilities
-    globalprotect.enable = true;
 
     # Required by nautilus for trash management
     gvfs.enable = true;
@@ -254,7 +230,6 @@ in
         DEVICES_TO_DISABLE_ON_WIFI_CONNECT = "wwan";
         DEVICES_TO_DISABLE_ON_WWAN_CONNECT = "wifi";
       };
-
     };
   };
 
@@ -271,11 +246,11 @@ in
 
     repo = {
       games.enable = true;
-      sway.enable = true;
       work.enable = true;
 
       desktop = {
         enable = true;
+        sway.enable = true;
 
         display = {
           name = "eDP-1";
@@ -284,26 +259,6 @@ in
           scale = 1.00;
         };
       };
-    };
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  environment = {
-    systemPackages = with pkgs; [
-      appimage-run
-      neovim
-      inputs.pinix.packages.x86_64-linux.pinix
-      # Dev Libraries
-      geos
-      gdal
-      zlib # Lossless data-compression library
-    ];
-
-    variables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
     };
   };
 

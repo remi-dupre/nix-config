@@ -91,7 +91,7 @@
     # IDE Integration
     lua-language-server # A language server that offers Lua language support
     nixd # Nix language server
-    nixpkgs-fmt # Nix code formatter for nixpkgs
+    nixfmt-rfc-style # Official formatter for Nix code
     ruff-lsp # A Language Server Protocol implementation for Ruff
     yaml-language-server # Language Server for YAML Files
   ];

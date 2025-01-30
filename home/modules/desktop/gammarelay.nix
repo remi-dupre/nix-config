@@ -1,8 +1,8 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... }:
 
 let
-  bin = import ../../common/binaries.nix inputs;
-  script = import ../../common/scripts inputs;
+  bin = import ../../common/binaries.nix pkgs;
+  script = import ../../common/scripts pkgs;
   cfg = config.repo.desktop;
 in
 

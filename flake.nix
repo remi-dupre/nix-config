@@ -1,6 +1,7 @@
 {
   inputs = {
     disko.url = "github:nix-community/disko";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     pinix.url = "github:remi-dupre/pinix";
 
@@ -20,31 +21,43 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, nix-on-droid, ... } @ attrs: {
-    nixosConfigurations = {
-      cerf = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = attrs;
-        modules = [ ./hosts/cerf/configuration.nix ];
+  outputs =
+    { nixpkgs
+    , home-manager
+    , nix-on-droid
+    , ...
+    }@attrs:
+    {
+      nixosConfigurations = {
+        cerf = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = attrs;
+          modules = [ ./hosts/cerf/configuration.nix ];
+        };
+
+        sncf = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = attrs;
+          modules = [ ./hosts/sncf.nix ];
+        };
+
+        surface = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = attrs;
+          modules = [ ./hosts/surface/configuration.nix ];
+        };
       };
 
-      sncf = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = attrs;
-        modules = [ ./hosts/sncf.nix ];
+      homeConfigurations = {
+        deck = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = attrs;
+          modules = [ ./hosts/deck.nix ];
+        };
+      };
+
+      nixOnDroidConfigurations.fp3 = nix-on-droid.lib.nixOnDroidConfiguration {
+        modules = [ ./hosts/fp3.nix ];
       };
     };
-
-    homeConfigurations = {
-      deck = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = attrs;
-        modules = [ ./hosts/deck.nix ];
-      };
-    };
-
-    nixOnDroidConfigurations.fp3 = nix-on-droid.lib.nixOnDroidConfiguration {
-      modules = [ ./hosts/fp3.nix ];
-    };
-  };
 }

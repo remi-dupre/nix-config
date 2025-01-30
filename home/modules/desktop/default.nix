@@ -1,13 +1,15 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... }:
 
 let
-  bin = import ../../common/binaries.nix inputs;
-  font = import ../../common/fonts.nix inputs;
+  bin = import ../../common/binaries.nix pkgs;
+  font = import ../../common/fonts.nix pkgs;
   cfg = config.repo.desktop;
 in
 
 {
   imports = [
+    ./gnome
+    ./sway
     ./foot.nix
     ./gammarelay.nix
     ./gtk.nix
@@ -46,27 +48,29 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = [ font.pkg ] ++ (with pkgs; [
-        # Terminal utilities
-        xdg-utils # A set of command line tools that assist applications wit...
-        # Desktop Applications
-        evince # GNOME's document viewer
-        foliate # A simple and modern GTK eBook reader
-        gimp # The GNU Image Manipulation Program
-        file-roller # Archive manager for the GNOME desktop environment
-        simple-scan # Simple scanning utility
-        inkscape # Vector graphics editor
-        libreoffice # Comprehensive, professional-quality productivity suite...
-        loupe # A simple image viewer application written with GTK4 and Rust
-        organicmaps # Detailed Offline Maps for Travellers, Tourists, Hikers...
-        pavucontrol # PulseAudio Volume Control
-        qgis # A Free and Open Source Geographic Information System
-        rawtherapee # RAW converter and digital photo processing software
-        signal-desktop # Private, simple, and secure messenger
-        vlc # Cross-platform media player and streaming server
-        wdisplays # A graphical application for configuring displays in Wayl...
-        wl-gammarelay-rs # A simple program that provides DBus interface to ...
-      ]);
+      packages =
+        [ font.pkg ]
+        ++ (with pkgs; [
+          # Terminal utilities
+          xdg-utils # A set of command line tools that assist applications wi...
+          # Desktop Applications
+          evince # GNOME's document viewer
+          file-roller # Archive manager for the GNOME desktop environment
+          foliate # A simple and modern GTK eBook reader
+          gimp # The GNU Image Manipulation Program
+          inkscape # Vector graphics editor
+          krita # Free and open source painting application
+          libreoffice # Comprehensive, professional-quality productivity suit...
+          loupe # A simple image viewer application written with GTK4 and Rus
+          pavucontrol # PulseAudio Volume Control
+          qgis # A Free and Open Source Geographic Information System
+          rawtherapee # RAW converter and digital photo processing software
+          signal-desktop # Private, simple, and secure messenger
+          simple-scan # Simple scanning utility
+          vlc # Cross-platform media player and streaming server
+          wdisplays # A graphical application for configuring displays in Way...
+          wl-gammarelay-rs # A simple program that provides DBus interface to...
+        ]);
 
       # Workarround for wayland on electron apps. See
       # https://nixos.wiki/wiki/Wayland
@@ -84,6 +88,7 @@ in
       };
 
       file = {
+        # TODO: sway-specific
         ".config/rofi".source = ../../static/config/rofi;
       };
     };

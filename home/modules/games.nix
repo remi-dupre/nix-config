@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 let
   cfg = config.repo.games;
@@ -12,8 +16,22 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      lutris # Open Source gaming platform for GNU/Linux
+      appimage-run
       wineWowPackages.stable # Open Source implementation of the Windows API...
     ];
+
+    programs.mangohud = {
+      enable = true;
+      enableSessionWide = true;
+
+      settings = {
+        battery = true;
+        battery_time = true;
+        battery_watt = true;
+        fps_limit = 40;
+        no_display = true;
+      };
+    };
   };
+
 }

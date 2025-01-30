@@ -1,12 +1,12 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... }:
 
 let
-  bin = import ../../common/binaries.nix inputs;
-  color = import ../../common/colors.nix inputs;
-  font = import ../../common/fonts.nix inputs;
+  bin = import ../../../common/binaries.nix pkgs;
+  color = import ../../../common/colors.nix;
+  font = import ../../../common/fonts.nix pkgs;
 in
 
-lib.mkIf config.repo.sway.enable {
+lib.mkIf config.repo.desktop.sway.enable {
   wayland.windowManager.sway.config.bars = [{
     statusCommand = "SHELL=${bin.bash} i3status-rs ~/.config/i3status-rust/config-default.toml";
     position = "top";
