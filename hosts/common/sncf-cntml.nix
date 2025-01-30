@@ -3,6 +3,7 @@
 let
   secrets = import ./secrets.nix;
 in
+
 {
   users = {
     groups.cntlm = { };
