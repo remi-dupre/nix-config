@@ -1,7 +1,7 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... }:
 
 let
-  font = import ../../common/fonts.nix inputs;
+  font = import ../../common/fonts.nix pkgs;
   cfg = config.repo.desktop;
 in
 
@@ -17,22 +17,22 @@ lib.mkIf cfg.enable {
         box-drawings-uses-font-glyphs = true;
         pad = "4x4";
       };
-    
+
       bell = {
         urgent = "yes";
         visual = true;
         command = "dunstify -t 5000 -u low -a \"\${app-id}\" \"\${title}\" \"\${body}\"";
       };
-    
+
       mouse = {
         hide-when-typing = " yes ";
       };
-    
+
       scrollback = {
         lines = 10000;
         multiplier = 5.0;
       };
-    
+
       url = {
         label-letters = "qsdfghjklmwxcvbn";
       };

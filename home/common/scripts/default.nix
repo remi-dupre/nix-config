@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-rec {
+pkgs: rec {
   pkg = {
     gammarelay-sun = pkgs.writers.writePython3Bin
       "gammarelay-sun"

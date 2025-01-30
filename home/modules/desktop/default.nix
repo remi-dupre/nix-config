@@ -1,13 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}@inputs:
+{ config, lib, pkgs, ... }:
 
 let
-  bin = import ../../common/binaries.nix inputs;
-  font = import ../../common/fonts.nix inputs;
+  bin = import ../../common/binaries.nix pkgs;
+  font = import ../../common/fonts.nix pkgs;
   cfg = config.repo.desktop;
 in
 

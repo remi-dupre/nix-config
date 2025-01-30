@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   back = "#000000"; # background color
   prim = "#2e2f5d"; # primary color for accents

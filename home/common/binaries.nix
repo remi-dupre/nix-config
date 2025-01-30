@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-with pkgs; {
+pkgs: with pkgs; {
   bash = "${bash}/bin/bash";
   blueman-manager = "${blueman}/bin/blueman-manager";
   bluetoothctl = "${bluez}/bin/bluetoothctl";

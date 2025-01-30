@@ -1,13 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}@inputs:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.repo.desktop.gnome;
-  font = import ../../../common/fonts.nix inputs;
+  font = import ../../../common/fonts.nix pkgs;
 in
 
 {

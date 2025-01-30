@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }@inputs:
 
 let
@@ -15,7 +14,7 @@ in
   ];
 
   options.common.deviceName = lib.mkOption {
-    type = lib.types.string;
+    type = lib.types.str;
   };
 
   config = {

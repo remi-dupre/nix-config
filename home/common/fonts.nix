@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-rec {
+pkgs: rec {
   pkg = pkgs.nerdfonts.override {
     fonts = [
       "FiraMono"

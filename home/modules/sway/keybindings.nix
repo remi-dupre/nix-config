@@ -1,9 +1,9 @@
-{ config, lib, pkgs, ... } @ inputs:
+{ config, lib, pkgs, ... }:
 
 let
-  action = (import ../../common/actions.nix inputs);
-  bin = (import ../../common/binaries.nix inputs);
-  script = (import ../../common/scripts inputs);
+  action = import ../../common/actions.nix pkgs;
+  bin = import ../../common/binaries.nix pkgs;
+  script = import ../../common/scripts pkgs;
   cfg-display = config.repo.desktop.display;
   modifier = "Mod4";
 in

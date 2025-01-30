@@ -22,11 +22,10 @@
   };
 
   outputs =
-    {
-      nixpkgs,
-      home-manager,
-      nix-on-droid,
-      ...
+    { nixpkgs
+    , home-manager
+    , nix-on-droid
+    , ...
     }@attrs:
     {
       nixosConfigurations = {
