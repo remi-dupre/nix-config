@@ -13,7 +13,11 @@ in
     ./disko-partitioning.nix
   ];
 
-  repo.common.deviceName = "cerf";
+  repo.common = {
+    deviceName = "cerf";
+    nextdns.enable = true;
+  };
+
   zramSwap.enable = true;
 
   hardware = {

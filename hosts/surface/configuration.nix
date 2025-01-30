@@ -14,6 +14,7 @@
   repo.common = {
     deviceName = "surface";
     gnome.enable = true;
+    nextdns.enable = true;
   };
 
   zramSwap.enable = true;
