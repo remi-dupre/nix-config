@@ -29,6 +29,11 @@
     direnv.enable = true; # A shell extension that manages your environment
     nix-index.enable = true; # A files database for nixpkgs
 
+    atuin = {
+      enable = true;
+      enableFishIntegration = true;
+    };
+
     python = {
       enable = true;
 
