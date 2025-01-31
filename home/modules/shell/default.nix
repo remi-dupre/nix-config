@@ -32,12 +32,12 @@
     python = {
       enable = true;
 
-      libraries = ps: with ps; [
-        httpie
-        python-lsp-server
+      libraries =
+        ps: with ps; [
+          httpie
+          python-lsp-server
 
-        (buildPythonPackage
-          rec {
+          (buildPythonPackage rec {
             pname = "httpie-credential-store";
             version = "3.0.0";
             src = fetchPypi {
@@ -47,7 +47,7 @@
             doCheck = false;
             propagatedBuildInputs = [ keyring ];
           })
-      ];
+        ];
     };
 
     tmux = {
@@ -83,7 +83,6 @@
     nodePackages.prettier # Prettier is an opinionated code formatter
     openssl # A cryptographic library that implements the SSL and TLS protocols
     pkg-config # A tool that allows packages to find out information about o...
-    poetry # Python dependency management and packaging made easy
     pre-commit # A framework for managing and maintaining multi-language pre...
     ruff # An extremely fast Python linter
     rustup # The Rust toolchain installer
@@ -94,5 +93,11 @@
     nixfmt-rfc-style # Official formatter for Nix code
     ruff-lsp # A Language Server Protocol implementation for Ruff
     yaml-language-server # Language Server for YAML Files
+
+    # Poetry : Python dependency management and packaging made easy
+    (poetry.withPlugins (p: [
+      p.poetry-audit-plugin # Poetry plugin for checking security vulnerabil...
+      p.poetry-plugin-up # Poetry plugin to simplify package updates
+    ]))
   ];
 }
