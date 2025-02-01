@@ -1,2 +1,3 @@
+home/common/secrets.nix filter=git-crypt diff=git-crypt
 hosts/certs/* filter=git-crypt diff=git-crypt
 hosts/common/secrets.nix filter=git-crypt diff=git-crypt

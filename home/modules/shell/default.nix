@@ -1,5 +1,9 @@
 { pkgs, ... }:
 
+let
+  secrets = import ../../common/secrets.nix;
+in
+
 {
   imports = [
     ./eza.nix
@@ -33,6 +37,7 @@
       enable = true;
       enableFishIntegration = true;
       flags = [ "--disable-up-arrow" ];
+      settings.key_path = pkgs.writeText "atuin-key" secrets.atuin-key;
     };
 
     python = {
