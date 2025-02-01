@@ -19,13 +19,19 @@
       url = "github:remi-dupre/nix-on-droid/4eac7c468941fb14665a8e2423322a85faf40d8f";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    { nixpkgs
-    , home-manager
-    , nix-on-droid
-    , ...
+    {
+      nixpkgs,
+      home-manager,
+      nix-on-droid,
+      ...
     }@attrs:
     {
       nixosConfigurations = {

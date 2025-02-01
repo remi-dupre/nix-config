@@ -1,4 +1,10 @@
-{ config, lib, pkgs, pinix, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  pinix,
+  ...
+}@inputs:
 
 let
   cfg = config.repo.common;
@@ -6,6 +12,8 @@ in
 
 {
   imports = [
+    inputs.home-manager.nixosModules.home-manager
+    inputs.sops-nix.nixosModules.sops
     ./gnome.nix
     ./nextdns.nix
   ];
@@ -18,6 +26,13 @@ in
 
   config = {
     networking.hostName = cfg.deviceName;
+
+    # Secrets management
+    sops = {
+      age.keyFile = "/home/remi/.age-key.txt";
+      defaultSopsFile = ../../secrets/system.yaml;
+      secrets.nextdns-id = { };
+    };
 
     # Define a user account. Don't forget to set a password with ‘passwd’.
     users.users.remi = {
@@ -65,7 +80,13 @@ in
     };
 
     # Override existing files from home
-    home-manager.backupFileExtension = "hm-backup";
+    home-manager = {
+      backupFileExtension = "hm-backup";
+
+      sharedModules = [
+        inputs.sops-nix.homeManagerModules.sops
+      ];
+    };
 
     # Docker
     virtualisation.docker.enable = true;

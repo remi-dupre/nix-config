@@ -14,16 +14,31 @@ in
   };
 
   config = lib.mkIf cfg.nextdns.enable {
-    services.resolved = {
+    sops = {
+      secrets.nextdns-id = { };
+
+      templates.nextdns-config.content = ''
+        profile     ${config.sops.placeholder.nextdns-id}
+        forwarder   https://dns.nextdns.io/${config.sops.placeholder.nextdns-id}/${cfg.deviceName}#45.90.28.0
+        forwarder   https://dns.nextdns.io/${config.sops.placeholder.nextdns-id}/${cfg.deviceName}#2a07:a8c0::
+        forwarder   https://dns.nextdns.io/${config.sops.placeholder.nextdns-id}/${cfg.deviceName}#45.90.30.0
+        forwarder   https://dns.nextdns.io/${config.sops.placeholder.nextdns-id}/${cfg.deviceName}#2a07:a8c1::
+        cache-size  10MB
+      '';
+    };
+
+    services.nextdns = {
       enable = true;
-      dnsovertls = "true";
+
+      arguments = [
+        "-config-file"
+        "${config.sops.templates.nextdns-config.path}"
+      ];
     };
 
     networking.nameservers = [
-      "45.90.28.0#${cfg.deviceName}-${secrets.nextdns-id}.dns.nextdns.io"
-      "2a07:a8c0::#${cfg.deviceName}-${secrets.nextdns-id}.dns.nextdns.io"
-      "45.90.30.0#${cfg.deviceName}-${secrets.nextdns-id}.dns.nextdns.io"
-      "2a07:a8c1::#${cfg.deviceName}-${secrets.nextdns-id}.dns.nextdns.io"
+      "127.0.0.1"
+      "::1"
     ];
   };
 }

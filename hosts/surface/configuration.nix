@@ -3,7 +3,6 @@
 {
   imports = [
     inputs.disko.nixosModules.disko
-    inputs.home-manager.nixosModules.home-manager
     inputs.nixos-hardware.nixosModules.microsoft-surface-pro-intel
     ../common
     ../common/nextdns.nix

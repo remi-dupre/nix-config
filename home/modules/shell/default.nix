@@ -1,8 +1,4 @@
-{ pkgs, ... }:
-
-let
-  secrets = import ../../common/secrets.nix;
-in
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -37,7 +33,7 @@ in
       enable = true;
       enableFishIntegration = true;
       flags = [ "--disable-up-arrow" ];
-      settings.key_path = pkgs.writeText "atuin-key" secrets.atuin-key;
+      settings.key_path = config.sops.secrets.atuin-key.path;
     };
 
     python = {
