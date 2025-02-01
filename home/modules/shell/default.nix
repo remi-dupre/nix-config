@@ -33,7 +33,12 @@
       enable = true;
       enableFishIntegration = true;
       flags = [ "--disable-up-arrow" ];
-      settings.key_path = config.sops.secrets.atuin-key.path;
+
+      settings = {
+        key_path = config.sops.secrets.atuin-key.path;
+        sync_frequency = "5m";
+        sync.records = true;
+      };
     };
 
     python = {
