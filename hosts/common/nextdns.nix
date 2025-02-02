@@ -2,7 +2,6 @@
 
 let
   cfg = config.repo.common;
-  secrets = import ./secrets.nix;
 in
 
 {
@@ -34,6 +33,25 @@ in
         "-config-file"
         "${config.sops.templates.nextdns-config.path}"
       ];
+    };
+
+    # See https://github.com/nextdns/nextdns/issues/699
+    systemd.services.nextdns-suspend-hack = {
+      enable = true;
+      wantedBy = [ "suspend.target" ];
+
+      unitConfig = {
+        Description = "Hack to restart nextdns on resume";
+        After = "suspend.target";
+      };
+
+      serviceConfig = {
+        User = "root";
+        Type = "oneshot";
+        ExecStart = "systemctl restart nextdns";
+        TimeoutSec = "0";
+        StandardOutput = "syslog";
+      };
     };
 
     networking.nameservers = [
