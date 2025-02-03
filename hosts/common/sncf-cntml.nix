@@ -1,10 +1,14 @@
-{ ... }:
-
-let
-  secrets = import ./secrets.nix;
-in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
+  networking.proxy.default = "http://localhost:3128";
+  sops.secrets.cntlm-config.owner = "cntlm";
+
   users = {
     groups.cntlm = { };
     users.cntlm.group = "cntlm";
@@ -12,29 +16,13 @@ in
 
   services.cntlm = {
     enable = true;
-    port = [ 3128 ];
-    username = "9609122Y";
-    domain = "commun.ad.sncf.fr";
-    noproxy = [ "localhost" "127.0.0.*" "10.*" "192.168.*" ];
-    password = ""; # allow to input hashed password
-
-    proxy = [
-      "web-lyon4.sncf.fr:8080"
-      "web-lyon5.sncf.fr:8080"
-      "web-lyon6.sncf.fr:8080"
-      "web-pa-1.sncf.fr:8080"
-      "web-pa-2.sncf.fr:8080"
-    ];
-
-    extraConfig = ''
-      Tunnel 127.0.0.1:11443:ssh-proxy.dgexsol.fr:443
-      ${secrets.sncf-cntlm-password}
-    '';
+    domain = "foo";
+    username = "foo";
+    proxy = [ ];
   };
 
-  systemd.services.nix-daemon.environment = {
-    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
+  systemd.services = {
+    cntlm.serviceConfig.ExecStart = lib.mkForce "${pkgs.cntlm}/bin/cntlm -U cntlm -c ${config.sops.secrets.cntlm-config.path} -v -f";
+    nix-daemon.environment.NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
   };
-
-  networking.proxy.default = "http://localhost:3128";
 }

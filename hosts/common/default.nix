@@ -31,7 +31,6 @@ in
     sops = {
       age.keyFile = "/home/remi/.age-key.txt";
       defaultSopsFile = ../../secrets/system.yaml;
-      secrets.nextdns-id = { };
     };
 
     # Define a user account. Don't forget to set a password with ‘passwd’.

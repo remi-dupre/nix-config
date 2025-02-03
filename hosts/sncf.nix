@@ -1,15 +1,18 @@
-{ lib, pkgs, ... } @ inputs:
+{ lib, pkgs, ... }@inputs:
 
 {
   imports = [
-    inputs.nixos-wsl.nixosModules.wsl
     inputs.home-manager.nixosModules.home-manager
+    inputs.nixos-wsl.nixosModules.wsl
+    inputs.sops-nix.nixosModules.sops
     ./common/sncf-cntml.nix
     ./common/sncf-certs.nix
   ];
 
-  # Temporary addition of ADB
-  programs.adb.enable = true;
+  sops = {
+    age.keyFile = "/home/remi/.age-key.txt";
+    defaultSopsFile = ../secrets/system.yaml;
+  };
 
   wsl = {
     enable = true;
@@ -17,7 +20,10 @@
   };
 
   nix = {
-    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
     gc = {
       automatic = true;
@@ -27,15 +33,17 @@
   };
 
   environment = {
-    systemPackages = (with pkgs; [
-      neovim
-      # Dev Libraries
-      geos
-      gdal
-      zlib # Lossless data-compression library
-    ]) ++ [
-      inputs.pinix.packages.x86_64-linux.pinix
-    ];
+    systemPackages =
+      (with pkgs; [
+        neovim
+        # Dev Libraries
+        geos
+        gdal
+        zlib # Lossless data-compression library
+      ])
+      ++ [
+        inputs.pinix.packages.x86_64-linux.pinix
+      ];
 
     variables = {
       EDITOR = "nvim";
@@ -47,16 +55,26 @@
   users.users.remi = {
     isNormalUser = true;
     description = "Rémi Dupré";
-    extraGroups = [ "docker" "wheel" "adbusers" ];
+    extraGroups = [
+      "docker"
+      "wheel"
+      "adbusers"
+    ];
     shell = pkgs.fish;
   };
 
   # Include homemanager config
-  home-manager.users.remi = {
-    imports = [ ../home ];
-    repo.work = {
-      enable = true;
-      proxy.enable = true;
+  home-manager = {
+    sharedModules = [
+      inputs.sops-nix.homeManagerModules.sops
+    ];
+
+    users.remi = {
+      imports = [ ../home ];
+      repo.work = {
+        enable = true;
+        proxy.enable = true;
+      };
     };
   };
 
@@ -94,4 +112,3 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
 }
-

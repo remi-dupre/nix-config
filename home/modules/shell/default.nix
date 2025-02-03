@@ -90,7 +90,6 @@
     cargo-tarpaulin # A code coverage tool for Rust projects
     cargo-udeps # Find unused dependencies in Cargo.toml
     gcc # GNU Compiler Collection (wrapper script)
-    git-crypt # Transparent file encryption in git
     gitleaks # Scan git repos (or files) for secrets
     nodePackages.prettier # Prettier is an opinionated code formatter
     openssl # A cryptographic library that implements the SSL and TLS protocols
