@@ -1,11 +1,14 @@
 {
   inputs = {
-    disko.url = "github:nix-community/disko";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    pinix.url = "github:remi-dupre/pinix";
 
     # Must be manually updated to avoid recompiling kernel too often on surface
     nixos-hardware.url = "github:NixOS/nixos-hardware/dfad538f751a5aa5d4436d9781ab27a6128ec9d4";
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
@@ -19,6 +22,11 @@
 
     nix-on-droid = {
       url = "github:remi-dupre/nix-on-droid/4eac7c468941fb14665a8e2423322a85faf40d8f";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    pinix = {
+      url = "github:remi-dupre/pinix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
