@@ -37,6 +37,9 @@
     wifi.powersave = true;
   };
 
+  # Enable the local print service
+  services.printing.enable = true;
+
   programs = {
     fish.enable = true;
 
@@ -66,6 +69,7 @@
     imports = [ ../../home ];
 
     repo = {
+      games.enable = true;
       work.enable = true;
 
       desktop.display = {
